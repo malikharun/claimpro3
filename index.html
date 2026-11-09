@@ -14,6 +14,10 @@
   <!-- FreeImage.host Upload Plugin SDK -->
   <script async src="https://freeimage.host/sdk/pup.js" data-url="https://freeimage.host/upload"></script>
 
+  <!-- Leaflet Interactive Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <script>
     tailwind.config = {
       theme: {
@@ -150,6 +154,7 @@
     body.theme-light #tab-expenses > div,
     body.theme-light #tab-gallery > div,
     body.theme-light #tab-history > div,
+    body.theme-light #tab-tips > div,
     body.theme-light .bg-slate-800,
     body.theme-light .bg-slate-800\/80,
     body.theme-light .bg-slate-800\/90 {
@@ -288,7 +293,10 @@
     body.theme-light #modalExpense > div,
     body.theme-light #modalAdvance > div,
     body.theme-light #modalPhoto > div,
-    body.theme-light #modalTideLink > div {
+    body.theme-light #modalTideLink > div,
+    body.theme-light #modalRig > div,
+    body.theme-light #modalSpot > div,
+    body.theme-light #modalRigLightbox > div {
       background-color: #ffffff !important;
       border-color: #cfe2ee !important;
       box-shadow: 0 25px 50px -12px rgba(12, 74, 110, 0.25) !important;
@@ -296,14 +304,66 @@
     body.theme-light #modalExpense > div label,
     body.theme-light #modalAdvance > div label,
     body.theme-light #modalPhoto > div label,
-    body.theme-light #modalTideLink > div label {
+    body.theme-light #modalTideLink > div label,
+    body.theme-light #modalRig > div label,
+    body.theme-light #modalSpot > div label {
       color: #1e3a58 !important;
     }
     body.theme-light #modalExpenseTitle,
     body.theme-light #modalAdvance h3,
     body.theme-light #modalPhoto h3,
-    body.theme-light #modalTideTitle {
+    body.theme-light #modalTideTitle,
+    body.theme-light #modalRig h3,
+    body.theme-light #modalSpot h3 {
       color: #0c2b4e !important;
+    }
+
+    /* Leaflet In-App Map Overrides */
+    .leaflet-popup-content-wrapper {
+      background: #1e293b;
+      color: #f8fafc;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .leaflet-popup-tip {
+      background: #1e293b;
+    }
+    body.theme-light .leaflet-popup-content-wrapper {
+      background: #ffffff !important;
+      color: #0c2b4e !important;
+      border-color: #cbd5e1 !important;
+      box-shadow: 0 10px 25px -5px rgba(12, 74, 110, 0.2) !important;
+    }
+    body.theme-light .leaflet-popup-tip {
+      background: #ffffff !important;
+    }
+    .leaflet-container {
+      font-family: inherit !important;
+    }
+    .custom-pulse-marker {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      background: #0ea5e9;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
+    }
+    .custom-pulse-marker::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: -2px;
+      left: -2px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+      animation: markerPulse 1.8s infinite;
+    }
+    @keyframes markerPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(3); opacity: 0; }
     }
 
     /* Footer Tema Terang: Navi Blue */
@@ -430,6 +490,15 @@
         </svg>
         <span>Sejarah & Arkib Trip</span>
         <span id="historyBadge" class="bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded-full text-xs">0</span>
+      </button>
+
+      <!-- Butang Menu Baharu: Tips & Teknik -->
+      <button onclick="switchTab('tips')" id="tab-btn-tips" class="nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+        <span>Tips & Teknik</span>
+        <span class="badge-chip bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] py-0 px-1.5 font-bold">Baru</span>
       </button>
     </div>
   </nav>
@@ -1215,7 +1284,345 @@
 
     </div>
 
+    <!-- ================= TAB 5: TIPS & TEKNIK MEMANCING ================= -->
+    <div id="tab-tips" class="hidden space-y-6">
+
+      <!-- Header Banner Tips & Teknik -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-ocean-950 border border-slate-700/80 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="badge-chip bg-amber-500/20 text-amber-300 border border-amber-500/30">Panduan & Eksplorasi</span>
+              <span class="badge-chip bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Peta Langsung Dalam Aplikasi</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-white mt-1.5 tracking-tight flex items-center gap-2">
+              <span>🎣 Tips & Teknik Memancing</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl leading-relaxed">
+              Koleksi susunan perambut terbaik, saiz mata kail, kekuatan tali serta eksplorasi interaktif spot memancing berhampiran kedudukan anda tanpa perlu keluar aplikasi.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="scrollToSection('section-perambut')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+              <span>🪢 Kad Perambut</span>
+            </button>
+            <button onclick="scrollToSection('section-map'); if(fishingMap) setTimeout(() => { fishingMap.invalidateSize(); }, 200);" class="px-3.5 py-2 bg-ocean-600 hover:bg-ocean-500 text-white text-xs font-semibold rounded-lg shadow-md shadow-ocean-600/30 flex items-center gap-1.5 transition">
+              <span>📍 Lokasi Terbaik</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= KAD 1: 🪢 KAD PERAMBUT ================= -->
+      <div id="section-perambut" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-700/80">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+              🪢 Panduan Perambut & Teknik Ikatan Strike
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Rujukan lengkap jenis perambut, target ikan, saiz mata kail & kekuatan tali berserta panduan visual.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Pautan FreeImage.host -->
+            <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-700 hover:bg-sky-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Muat naik rajah/foto ikatan ke FreeImage.host">
+              <svg class="w-3.5 h-3.5 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/></svg>
+              <span>1. Hubungi FreeImage</span>
+            </a>
+
+            <!-- Butang Tambah Perambut -->
+            <button onclick="toggleAddRigModal()" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition shadow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>+ Tambah Perambut</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Buttons for Rigs -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-bold text-slate-400 mr-1">Tapis Kategori:</span>
+          <button onclick="filterRigsByCategory('ALL')" id="rig-filter-ALL" class="px-2.5 py-1 text-xs rounded-lg font-semibold bg-ocean-600 text-white transition">Semua</button>
+          <button onclick="filterRigsByCategory('Dasar / Bottom')" id="rig-filter-Dasar" class="px-2.5 py-1 text-xs rounded-lg font-semibold bg-slate-700 text-slate-300 hover:text-white transition">Dasar / Bottom</button>
+          <button onclick="filterRigsByCategory('Hanyut / Live Bait')" id="rig-filter-Hanyut" class="px-2.5 py-1 text-xs rounded-lg font-semibold bg-slate-700 text-slate-300 hover:text-white transition">Hanyut / Live Bait</button>
+          <button onclick="filterRigsByCategory('Dawai / Gigi Tajam')" id="rig-filter-Dawai" class="px-2.5 py-1 text-xs rounded-lg font-semibold bg-slate-700 text-slate-300 hover:text-white transition">Dawai (Tenggiri)</button>
+          <button onclick="filterRigsByCategory('Jigging & Casting')" id="rig-filter-Jigging" class="px-2.5 py-1 text-xs rounded-lg font-semibold bg-slate-700 text-slate-300 hover:text-white transition">Jigging & Leader</button>
+        </div>
+
+        <!-- Rigs Visual Grid Cards -->
+        <div id="rigsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- ================= KAD 2: 📍 KAD LOKASI TERBAIK (PETA INTERAKTIF) ================= -->
+      <div id="section-map" class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-700/80">
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-ocean-400 animate-pulse"></span>
+              📍 Lokasi Memancing Terbaik Berhampiran
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Peta interaktif lengkap dengan pin spot strike, jeti, kelong, rumah rakit, tuas dan kemudahan setempat.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Butang Geolocation: Cari Lokasi Berhampiran -->
+            <button onclick="locateUserFishingSpot()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition shadow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              <span>Cari Lokasi Berhampiran (GPS)</span>
+            </button>
+
+            <!-- Butang Reset View Map -->
+            <button onclick="resetMapView()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition" title="Papar Semula Seluruh Peta Malaysia">
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span class="hidden sm:inline">Pusat Peta</span>
+            </button>
+
+            <!-- Butang Tambah Spot Lokasi Baharu -->
+            <button onclick="toggleAddSpotModal()" class="px-3 py-2 bg-ocean-600 hover:bg-ocean-500 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>+ Spot Saya</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter & Search Bar for Map -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div class="sm:col-span-2">
+            <input type="text" id="searchSpotQuery" oninput="filterSpotsOnMap()" placeholder="Cari spot memancing (Cth: Rompin, Yan, Sedili, Rakit, Kelong)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-ocean-500">
+          </div>
+          <div>
+            <select id="filterSpotCategory" onchange="filterSpotsOnMap()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-ocean-500">
+              <option value="ALL">Semua Jenis Spot (Semua)</option>
+              <option value="Jeti & Muara">Jeti & Muara</option>
+              <option value="Kelong & Rakit">Kelong & Rumah Rakit</option>
+              <option value="Tuas & Laut Dalam">Tuas & Laut Lepas</option>
+              <option value="Kolam Air Masin">Kolam Air Masin</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Info Pill Status Lokasi Berhampiran -->
+        <div id="userLocationBanner" class="hidden bg-slate-900/90 border border-emerald-500/30 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping shrink-0"></span>
+            <span id="userLocationText" class="text-slate-200 font-medium">Lokasi semasa anda telah dikesan.</span>
+          </div>
+          <span id="userNearestSpotBadge" class="font-bold text-amber-400 bg-slate-800 px-2 py-0.5 rounded-lg border border-slate-700">Spot Terdekat: -</span>
+        </div>
+
+        <!-- CONTAINER PETA INTERAKTIF LEAFLET -->
+        <div class="relative rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 shadow-inner">
+          <div id="fishingMap" class="w-full h-[430px] sm:h-[480px] z-10"></div>
+          
+          <!-- Petunjuk Jenis Pin Peta -->
+          <div class="absolute bottom-3 left-3 z-[400] bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-1 shadow-lg pointer-events-auto">
+            <div class="font-bold text-white mb-1 border-b border-slate-700 pb-0.5">Petunjuk Spot:</div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span> Jeti & Muara</div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Kelong & Rumah Rakit</div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Tuas & Laut Lepas</div>
+            <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Kolam Air Masin</div>
+          </div>
+        </div>
+
+        <!-- Senarai Kad Ringkas Spot Di Bawah Peta -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2.5">Spot Pilihan & Lokasi Disyorkan</h4>
+          <div id="spotsCardList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </main>
+
+  <!-- ================= MODAL: TAMBAH PERAMBUT BAHARU ================= -->
+  <div id="modalRig" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          Tambah Panduan Perambut & Teknik Ikatan
+        </h3>
+        <button onclick="toggleAddRigModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick FreeImage helper in Modal -->
+      <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 mb-4 flex items-center justify-between gap-2 text-xs text-slate-300">
+        <div>
+          <span class="font-bold text-sky-400 block">Sediakan Foto / Rajah:</span>
+          Upload gambar perambut ke FreeImage.host & tampal <span class="font-mono text-amber-300">Direct Link</span> URL.
+        </div>
+        <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold shrink-0 transition">
+          Upload Foto
+        </a>
+      </div>
+
+      <form id="formRig" onsubmit="handleSaveRig(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Direct Link Foto / Rajah Perambut (URL) *</label>
+          <input type="url" id="rigImageUrlInput" placeholder="https://iili.io/xxxx.jpg atau https://..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-amber-500" required oninput="previewModalRigUrl(this.value)">
+        </div>
+
+        <!-- Live Preview -->
+        <div id="modalRigPreviewBox" class="hidden h-36 w-full rounded-xl border border-slate-700 bg-slate-950/80 overflow-hidden flex items-center justify-center relative">
+          <img id="modalRigPreviewImg" src="" alt="Pratonton Rajah" class="h-full w-full object-contain">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Nama Jenis Perambut *</label>
+            <input type="text" id="rigNameInput" placeholder="Cth: Perambut Apollo 2 Mata / T-Knot" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Kategori Teknik *</label>
+            <select id="rigCategoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required>
+              <option value="Dasar / Bottom">Dasar / Bottom</option>
+              <option value="Hanyut / Live Bait">Hanyut / Live Bait</option>
+              <option value="Dawai / Gigi Tajam">Dawai / Gigi Tajam</option>
+              <option value="Jigging & Casting">Jigging & Casting</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Jenis Ikan Sasaran *</label>
+            <input type="text" id="rigTargetFishInput" placeholder="Cth: Kerapu, Jenahak, Pari, Gelama" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Saiz Mata Kail *</label>
+            <input type="text" id="rigHookSizeInput" placeholder="Cth: Saiz 1/0 - 3/0 Chinu / Circle Hook" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Jenis & Kekuatan Tali (Perambut/Leader) *</label>
+          <input type="text" id="rigLineSpecInput" placeholder="Cth: Fluorocarbon 100% 40lb - 60lb" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Nota & Tip Penggunaan / Cara Ikat *</label>
+          <textarea id="rigNotesInput" rows="3" placeholder="Cth: Buat simpulan T-Knot sepanjang 15cm dengan jarak 30cm antara mata kail. Sangat sesuai untuk arus deras..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500" required></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="toggleAddRigModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-white font-semibold rounded-lg shadow-lg shadow-amber-600/30 transition">Simpan Perambut</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ZOOM / DETAIL PERAMBUT LIGHTBOX ================= -->
+  <div id="modalRigLightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6" onclick="if(event.target === this) closeRigLightbox()">
+    <div class="max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-950/80">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          <h3 id="rigLightboxTitle" class="text-sm sm:text-base font-bold text-white truncate">Panduan Perambut</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="rigLightboxSourceBtn" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-slate-800 hover:bg-ocean-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span class="hidden sm:inline">Buka Rajah Penuh</span>
+          </a>
+          <button onclick="closeRigLightbox()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 bg-black flex items-center justify-center overflow-hidden p-2 sm:p-4 min-h-[260px] max-h-[50vh]">
+        <img id="rigLightboxImg" src="" alt="Panduan Perambut" class="max-h-full max-w-full object-contain rounded-lg shadow-xl cursor-zoom-in" onclick="window.open(this.src, '_blank')">
+      </div>
+
+      <div class="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/90 text-xs space-y-3">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Sasaran Ikan</span>
+            <p id="rigLightboxTarget" class="text-xs sm:text-sm font-bold text-amber-300 mt-0.5 truncate">-</p>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Saiz Mata Kail</span>
+            <p id="rigLightboxHook" class="text-xs sm:text-sm font-bold font-mono text-ocean-400 mt-0.5 truncate">-</p>
+          </div>
+          <div class="col-span-2 sm:col-span-1 bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Spesifikasi Tali</span>
+            <p id="rigLightboxLine" class="text-xs sm:text-sm font-bold font-mono text-emerald-400 mt-0.5 truncate">-</p>
+          </div>
+        </div>
+        <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-slate-300 leading-relaxed" id="rigLightboxNotes">
+          -
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: TAMBAH SPOT LOKASI BAHARU ================= -->
+  <div id="modalSpot" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-ocean-400"></span>
+          Tambah Spot Memancing Pilihan
+        </h3>
+        <button onclick="toggleAddSpotModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="formSpot" onsubmit="handleSaveSpot(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Nama Spot / Jeti / Kelong *</label>
+          <input type="text" id="spotNameInput" placeholder="Cth: Jeti Kuala Sedili Kechil" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Kategori Lokasi *</label>
+          <select id="spotCategoryInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+            <option value="Jeti & Muara">Jeti & Muara</option>
+            <option value="Kelong & Rakit">Kelong & Rumah Rakit</option>
+            <option value="Tuas & Laut Dalam">Tuas & Laut Lepas</option>
+            <option value="Kolam Air Masin">Kolam Air Masin</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Latitude (Lat) *</label>
+            <input type="number" step="any" id="spotLatInput" placeholder="Cth: 2.8091" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-ocean-500" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Longitude (Lng) *</label>
+            <input type="number" step="any" id="spotLngInput" placeholder="Cth: 103.4862" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-ocean-500" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Sasaran Ikan Dominan *</label>
+          <input type="text" id="spotTargetInput" placeholder="Cth: Siakap, Jenahak, Kerapu, Pari" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Kemudahan & Nota Spot</label>
+          <input type="text" id="spotFacilityInput" placeholder="Cth: Sewa bot, tandas, kedai umpan hidup, surau" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="toggleAddSpotModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-ocean-600 hover:bg-ocean-500 text-white font-semibold rounded-lg shadow-lg shadow-ocean-600/30 transition">Simpan Spot</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <!-- ================= MODAL: TAMBAH / KEMASKINI EXPENSE ITEM ================= -->
   <div id="modalExpense" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
@@ -1526,10 +1933,149 @@
     const STORAGE_KEY_TRIPS = 'FISHING_BUDDIES_TRIPS_V1';
     const STORAGE_KEY_ACTIVE_ID = 'FISHING_BUDDIES_ACTIVE_ID_V1';
     const STORAGE_KEY_THEME = 'FISHING_BUDDIES_THEME_V1';
+    const STORAGE_KEY_RIGS = 'FISHING_BUDDIES_RIGS_V1';
+    const STORAGE_KEY_SPOTS = 'FISHING_BUDDIES_SPOTS_V1';
 
     // State for History Table Sorting
     let historySortColumn = 'startDate';
     let historySortDirection = 'desc'; // 'asc' or 'desc'
+
+    // State for Tips & Teknik (Perambut & Map)
+    let rigsList = [];
+    let spotsList = [];
+    let currentRigFilter = 'ALL';
+    let fishingMap = null;
+    let fishingMapMarkers = [];
+    let userLocationMarker = null;
+    let userCoordinates = null;
+
+    // ================= DEFAULT DATA: PERAMBUT (RIGS) & LOKASI MEMANCING =================
+    const DEFAULT_RIGS = [
+      {
+        id: 'rig_1',
+        name: 'Perambut Apollo 2 Mata (Paternoster Rig)',
+        category: 'Dasar / Bottom',
+        targetFish: 'Gelama, Kerapu, Jenahak, Tanda, Pari',
+        hookSize: 'Saiz 1/0 - 3/0 Chinu / Circle Hook',
+        lineSpec: 'Fluorocarbon 100% 40lb - 60lb (Panjang 1.2m)',
+        notes: 'Simpulan T-Knot sepanjang 15cm membolehkan umpan udang hidup melambai bebas tanpa berpintal pada tali utama. Sangat sesuai untuk arus sederhana hingga laju di kawasan karang & perairan terbuka.',
+        imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=700&q=80',
+        createdAt: '2026-01-10'
+      },
+      {
+        id: 'rig_2',
+        name: 'Perambut Dawai Single Strand (Tenggiri Wire)',
+        category: 'Dawai / Gigi Tajam',
+        targetFish: 'Tenggiri, Alu-Alu (Barracuda), Yu',
+        hookSize: 'Mata Live Bait 4/0 + Treble Hook #2 di bahagian ekor',
+        lineSpec: 'Single Strand Stainless Wire #5 / #6 (40lb - 58lb)',
+        notes: 'Dawai sepanjang 25cm - 35cm disambungkan dengan ikatan Haywire Twist kemas. Mencegah putus akibat gigitan tajam ikan bergigi gergaji tanpa mengorbankan aksi umpan selar/kembung hidup.',
+        imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
+        createdAt: '2026-01-11'
+      },
+      {
+        id: 'rig_3',
+        name: 'Perambut Hanyut Live Bait (Drift Rig)',
+        category: 'Hanyut / Live Bait',
+        targetFish: 'Siakap Putih, GT (Gerepoh), Talang, Jenahak',
+        hookSize: 'Saiz 2/0 - 5/0 Live Bait Heavy Hook',
+        lineSpec: 'Shock Leader Monofilament / Fluorocarbon 30lb - 50lb (1.5m - 2.0m)',
+        notes: 'Dilepaskan hanyut bersama arus secara perlahan menggunakan belon kecil atau tanpa batu ladung di celah tiang jeti, sangkar ikan mahupun tuas. Sangat efektif untuk pemangsa aktif di permukaan air.',
+        imageUrl: 'https://images.unsplash.com/photo-1520690214124-2405c5217036?auto=format&fit=crop&w=700&q=80',
+        createdAt: '2026-01-12'
+      },
+      {
+        id: 'rig_4',
+        name: 'Perambut Batu Ladung Hidup (Running Sinker)',
+        category: 'Dasar / Bottom',
+        targetFish: 'Ikan Pari, Kaci, Tebal Pipi, Duri, Senangin',
+        hookSize: 'Circle Hook 2/0 - 4/0 (Kemut & Sangkut Sendiri)',
+        lineSpec: 'Fluorocarbon 50lb + Batu Ladung Lubang Oval',
+        notes: 'Batu ladung menggelongsor bebas di atas kili-kili. Apabila ikan menyentap umpan di dasar pasir, ia tidak merasa rintangan batu ladung sehingga mata kail tertancap kukuh di bibir ikan.',
+        imageUrl: 'https://images.unsplash.com/photo-1498084393753-b411b2d26b34?auto=format&fit=crop&w=700&q=80',
+        createdAt: '2026-01-13'
+      },
+      {
+        id: 'rig_5',
+        name: 'Ikatan FG Knot (Braid ke Shock Leader)',
+        category: 'Jigging & Casting',
+        targetFish: 'Semua Spesies (Casting, Slow Jigging, Popping)',
+        hookSize: 'Assist Hook Single / Twin Hook 1/0 - 3/0',
+        lineSpec: 'Braided PE 1.5 - 3.0 disambung ke Shock Leader 30lb - 50lb',
+        notes: 'Sambungan paling ramping dan terkuat (kekuatan simpulan 95%+). Melepasi cincin pemandu joran (guide ring) dengan sangat lancar tanpa geseran semasa lontaran jauh (casting).',
+        imageUrl: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=700&q=80',
+        createdAt: '2026-01-14'
+      }
+    ];
+
+    const DEFAULT_SPOTS = [
+      {
+        id: 'spot_1',
+        name: 'Jeti Kuala Rompin',
+        category: 'Jeti & Muara',
+        state: 'Pahang',
+        lat: 2.8092,
+        lng: 103.4862,
+        targetFish: 'Billfish (Layaran), Tenggiri, Tongkol, Jenahak',
+        facilities: 'Sewa bot pancing, kedai umpan udang hidup, bilik air, surau, tempat parkir kenderaan.',
+        notes: 'Ibu kota Sailfish dunia. Musim terbaik antara bulan Ogos hingga November.'
+      },
+      {
+        id: 'spot_2',
+        name: 'Kelong Acheh & Penyabong',
+        category: 'Kelong & Rakit',
+        state: 'Johor',
+        lat: 2.6517,
+        lng: 103.7441,
+        targetFish: 'Selar, Kembung, Tamban, Kerapu, Ikan Daun Baharu',
+        facilities: 'Penginapan atas kelong, makanan disediakan, elektrik, bot pemindahan dari jeti Penyabong.',
+        notes: 'Sangat santai untuk seisi keluarga dan rakan-rakan. Pancingan jig mikro dan apollo waktu malam sangat meriah.'
+      },
+      {
+        id: 'spot_3',
+        name: 'Tuas Yan & Tanjung Dawai',
+        category: 'Tuas & Laut Dalam',
+        state: 'Kedah',
+        lat: 5.7981,
+        lng: 100.3204,
+        targetFish: 'Tenggiri, Talang, Alu-Alu, Cupak, Kerapu Harimau',
+        facilities: 'Bot laju sewa harian, jeti bot nelayan, gerai makanan dan kedai pancing berhampiran.',
+        notes: 'Spot jigging dan pancingan hanyut umpan kembung segar yang sangat popular di utara.'
+      },
+      {
+        id: 'spot_4',
+        name: 'Rumah Rakit Teluk Sengat (Kota Tinggi)',
+        category: 'Kelong & Rakit',
+        state: 'Johor',
+        lat: 1.5647,
+        lng: 104.0276,
+        targetFish: 'Siakap, Ketuka, Semilang, Ketam Bunga, Jenahak Muara',
+        facilities: 'Dapur memasak, tandas, bilik rehat, bot penghantaran dari jeti.',
+        notes: 'Kawasan terlindung daripada ombak besar, sesuai memancing dasar malam hari.'
+      },
+      {
+        id: 'spot_5',
+        name: 'Kolam Air Masin Jugra Strike',
+        category: 'Kolam Air Masin',
+        state: 'Selangor',
+        lat: 2.8335,
+        lng: 101.4162,
+        targetFish: 'Siakap Putih, Kerapu Hybrid, Jenahak Merah, Siakap Merah',
+        facilities: 'Lampu limpah malam, kafe, sewa joran, kolam umpan hidup (udang, anak ikan).',
+        notes: 'Dibuka 24 jam. Pilihan terbaik menguji kekuatan perambut dan aksi tarikan ikan mega.'
+      },
+      {
+        id: 'spot_6',
+        name: 'Jeti Merbok & Pulau Bunting',
+        category: 'Jeti & Muara',
+        state: 'Kedah',
+        lat: 5.7167,
+        lng: 100.4167,
+        targetFish: 'Jenahak, Ikan Merah, Siakap, Kerapu Karang',
+        facilities: 'Jeti bot sewa, parking berbumbung, surau, jualan ais dan tong fiber.',
+        notes: 'Spot klasik pemancing dasar dan jigging ringan di gugusan pulau Yan.'
+      }
+    ];
 
     // ================= THEME CONTROL LOGIC =================
     function initTheme() {
@@ -1618,10 +2164,32 @@
     window.onload = function() {
       initTheme();
       loadTripsFromStorage();
+      loadTipsAndSpotsData();
       bindHeaderInputs();
       renderAll();
       showToast('Sistem Fishing Buddies sedia digunakan!');
     };
+
+    function loadTipsAndSpotsData() {
+      try {
+        const storedRigs = localStorage.getItem(STORAGE_KEY_RIGS);
+        rigsList = storedRigs ? JSON.parse(storedRigs) : DEFAULT_RIGS;
+
+        const storedSpots = localStorage.getItem(STORAGE_KEY_SPOTS);
+        spotsList = storedSpots ? JSON.parse(storedSpots) : DEFAULT_SPOTS;
+      } catch (e) {
+        rigsList = DEFAULT_RIGS;
+        spotsList = DEFAULT_SPOTS;
+      }
+    }
+
+    function saveRigsData() {
+      localStorage.setItem(STORAGE_KEY_RIGS, JSON.stringify(rigsList));
+    }
+
+    function saveSpotsData() {
+      localStorage.setItem(STORAGE_KEY_SPOTS, JSON.stringify(spotsList));
+    }
 
     function loadTripsFromStorage() {
       try {
@@ -1711,7 +2279,7 @@
 
     // ================= TABS SWITCHING =================
     function switchTab(tabId) {
-      const tabs = ['dashboard', 'expenses', 'claims', 'gallery', 'history'];
+      const tabs = ['dashboard', 'expenses', 'claims', 'gallery', 'history', 'tips'];
       tabs.forEach(t => {
         const page = document.getElementById('tab-' + t);
         const btn = document.getElementById('tab-btn-' + t);
@@ -1731,6 +2299,16 @@
         renderOfficialDocument();
       } else if (tabId === 'gallery') {
         renderGalleryTab();
+      } else if (tabId === 'tips') {
+        renderRigsGrid();
+        initFishingMap();
+      }
+    }
+
+    function scrollToSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
       }
     }
 
@@ -3226,6 +3804,509 @@
         toast.classList.remove('translate-y-0', 'opacity-100');
         toast.classList.add('translate-y-20', 'opacity-0');
       }, 3200);
+    }
+
+    // ================= TIPS & TEKNIK: 1. KAD PERAMBUT LOGIC =================
+    function filterRigsByCategory(cat) {
+      currentRigFilter = cat;
+      const categories = ['ALL', 'Dasar / Bottom', 'Hanyut / Live Bait', 'Dawai / Gigi Tajam', 'Jigging & Casting'];
+      
+      const idMap = {
+        'ALL': 'rig-filter-ALL',
+        'Dasar / Bottom': 'rig-filter-Dasar',
+        'Hanyut / Live Bait': 'rig-filter-Hanyut',
+        'Dawai / Gigi Tajam': 'rig-filter-Dawai',
+        'Jigging & Casting': 'rig-filter-Jigging'
+      };
+
+      Object.keys(idMap).forEach(key => {
+        const btn = document.getElementById(idMap[key]);
+        if (!btn) return;
+        if (key === cat) {
+          btn.className = "px-2.5 py-1 text-xs rounded-lg font-semibold bg-ocean-600 text-white transition";
+        } else {
+          btn.className = "px-2.5 py-1 text-xs rounded-lg font-semibold bg-slate-700 text-slate-300 hover:text-white transition";
+        }
+      });
+
+      renderRigsGrid();
+    }
+
+    function renderRigsGrid() {
+      const container = document.getElementById('rigsGridContainer');
+      if (!container) return;
+
+      let list = rigsList || [];
+      if (currentRigFilter !== 'ALL') {
+        list = list.filter(r => r.category === currentRigFilter);
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-slate-900/50 border border-slate-700/80 rounded-2xl p-8 text-center text-slate-400">
+            <svg class="w-12 h-12 text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <p class="text-sm font-bold text-slate-300">Tiada panduan perambut dalam kategori ini.</p>
+            <p class="text-xs text-slate-500 mt-1">Klik butang "+ Tambah Perambut" untuk menambah panduan baharu.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(rig => `
+        <div class="bg-slate-900/80 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg hover:border-amber-500/50 transition duration-300 flex flex-col justify-between group">
+          <!-- Gambar Panduan Visual / Foto Perambut -->
+          <div class="relative h-48 bg-slate-950 overflow-hidden cursor-pointer" onclick="openRigLightbox('${rig.id}')">
+            <img src="${rig.imageUrl}" alt="${escapeHtml(rig.name)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Panduan+Perambut';">
+            
+            <!-- Hover Zoom Overlay -->
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+              <span class="px-3 py-1.5 bg-amber-600/90 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-lg backdrop-blur-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                Zoom Panduan
+              </span>
+            </div>
+
+            <!-- Category Chip Tag -->
+            <div class="absolute top-2.5 left-2.5">
+              <span class="badge-chip bg-slate-950/80 backdrop-blur text-amber-300 border border-amber-500/40 text-[10px]">
+                ${escapeHtml(rig.category)}
+              </span>
+            </div>
+
+            <!-- Delete Custom Rig Button -->
+            <div class="absolute top-2.5 right-2.5" onclick="event.stopPropagation()">
+              <button onclick="deleteRig('${rig.id}')" class="p-1.5 bg-black/60 hover:bg-rose-600 text-slate-300 hover:text-white rounded-lg transition" title="Padam Perambut Ini">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Metadata & Maklumat Perambut -->
+          <div class="p-4 space-y-3 flex-1 flex flex-col justify-between">
+            <div>
+              <h4 class="font-extrabold text-white text-sm hover:text-amber-400 cursor-pointer transition line-clamp-1" onclick="openRigLightbox('${rig.id}')">
+                ${escapeHtml(rig.name)}
+              </h4>
+
+              <!-- Target Fish -->
+              <div class="mt-2 flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
+                <span>🐟</span>
+                <span class="truncate">Sasaran: ${escapeHtml(rig.targetFish)}</span>
+              </div>
+
+              <!-- Hook Size & Line Strength -->
+              <div class="grid grid-cols-2 gap-2 mt-2.5 text-[11px]">
+                <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800">
+                  <span class="text-slate-400 block text-[10px] uppercase font-bold">🪝 Mata Kail</span>
+                  <p class="font-bold font-mono text-ocean-300 truncate mt-0.5">${escapeHtml(rig.hookSize)}</p>
+                </div>
+                <div class="bg-slate-950/70 p-2 rounded-xl border border-slate-800">
+                  <span class="text-slate-400 block text-[10px] uppercase font-bold">🧵 Tali / Leader</span>
+                  <p class="font-bold font-mono text-emerald-300 truncate mt-0.5">${escapeHtml(rig.lineSpec)}</p>
+                </div>
+              </div>
+
+              <!-- Notes / Usage Tips -->
+              <p class="text-xs text-slate-400 mt-2.5 line-clamp-2 leading-relaxed bg-slate-900/40 p-2 rounded-lg border border-slate-800/60">
+                <span class="font-semibold text-slate-300">💡 Tip:</span> ${escapeHtml(rig.notes)}
+              </p>
+            </div>
+
+            <!-- View Detailed Diagram Button -->
+            <button onclick="openRigLightbox('${rig.id}')" class="w-full mt-2 py-2 bg-slate-800 hover:bg-amber-600 text-slate-200 hover:text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5 text-amber-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span>Lihat Panduan Penuh</span>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleAddRigModal() {
+      const modal = document.getElementById('modalRig');
+      const form = document.getElementById('formRig');
+      const previewBox = document.getElementById('modalRigPreviewBox');
+
+      if (modal.classList.contains('hidden')) {
+        form.reset();
+        previewBox.classList.add('hidden');
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function previewModalRigUrl(url) {
+      const box = document.getElementById('modalRigPreviewBox');
+      const img = document.getElementById('modalRigPreviewImg');
+      if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+        img.src = url.trim();
+        box.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    function handleSaveRig(e) {
+      e.preventDefault();
+      const imageUrl = document.getElementById('rigImageUrlInput').value.trim();
+      const name = document.getElementById('rigNameInput').value.trim();
+      const category = document.getElementById('rigCategoryInput').value;
+      const targetFish = document.getElementById('rigTargetFishInput').value.trim();
+      const hookSize = document.getElementById('rigHookSizeInput').value.trim();
+      const lineSpec = document.getElementById('rigLineSpecInput').value.trim();
+      const notes = document.getElementById('rigNotesInput').value.trim();
+
+      if (!name || !imageUrl) {
+        showToast('Sila masukkan nama dan direct link foto perambut!', 'error');
+        return;
+      }
+
+      const newRig = {
+        id: 'rig_' + Date.now(),
+        name,
+        category,
+        targetFish,
+        hookSize,
+        lineSpec,
+        notes,
+        imageUrl,
+        createdAt: new Date().toISOString().split('T')[0]
+      };
+
+      rigsList.unshift(newRig);
+      saveRigsData();
+      toggleAddRigModal();
+      renderRigsGrid();
+      showToast('Panduan perambut berjaya ditambah!');
+    }
+
+    function deleteRig(rigId) {
+      rigsList = rigsList.filter(r => r.id !== rigId);
+      saveRigsData();
+      renderRigsGrid();
+      showToast('Panduan perambut dikeluarkan.');
+    }
+
+    function openRigLightbox(rigId) {
+      const rig = rigsList.find(r => r.id === rigId);
+      if (!rig) return;
+
+      document.getElementById('rigLightboxTitle').innerText = rig.name;
+      document.getElementById('rigLightboxImg').src = rig.imageUrl;
+      document.getElementById('rigLightboxSourceBtn').href = rig.imageUrl;
+      document.getElementById('rigLightboxTarget').innerText = rig.targetFish;
+      document.getElementById('rigLightboxHook').innerText = rig.hookSize;
+      document.getElementById('rigLightboxLine').innerText = rig.lineSpec;
+      document.getElementById('rigLightboxNotes').innerText = rig.notes;
+
+      document.getElementById('modalRigLightbox').classList.remove('hidden');
+    }
+
+    function closeRigLightbox() {
+      document.getElementById('modalRigLightbox').classList.add('hidden');
+      document.getElementById('rigLightboxImg').src = '';
+    }
+
+    // ================= TIPS & TEKNIK: 2. KAD LOKASI TERBAIK (PETA INTERAKTIF) LOGIC =================
+    function initFishingMap() {
+      // Invalidate if already initialized
+      if (fishingMap) {
+        setTimeout(() => {
+          fishingMap.invalidateSize();
+        }, 200);
+        return;
+      }
+
+      const mapContainer = document.getElementById('fishingMap');
+      if (!mapContainer) return;
+
+      // Default view: Semenanjung Malaysia & Borneo (Center around central Malaysia)
+      fishingMap = L.map('fishingMap', {
+        center: [3.8, 102.5],
+        zoom: 7,
+        zoomControl: true
+      });
+
+      // OpenStreetMap Tiles (Fast, Free, CORS-friendly)
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(fishingMap);
+
+      // Render all spots
+      renderMapSpotsOnMap(spotsList);
+      renderSpotsCardList(spotsList);
+
+      setTimeout(() => {
+        fishingMap.invalidateSize();
+      }, 300);
+    }
+
+    function renderMapSpotsOnMap(list) {
+      if (!fishingMap) return;
+
+      // Clear existing markers
+      fishingMapMarkers.forEach(m => fishingMap.removeLayer(m));
+      fishingMapMarkers = [];
+
+      list.forEach(spot => {
+        // Color code based on category
+        let colorClass = 'text-sky-500';
+        let bgHex = '#0284c7';
+        if (spot.category === 'Kelong & Rakit') {
+          colorClass = 'text-amber-500';
+          bgHex = '#f59e0b';
+        } else if (spot.category === 'Tuas & Laut Dalam') {
+          colorClass = 'text-indigo-500';
+          bgHex = '#6366f1';
+        } else if (spot.category === 'Kolam Air Masin') {
+          colorClass = 'text-emerald-500';
+          bgHex = '#10b981';
+        }
+
+        const customIcon = L.divIcon({
+          className: 'custom-spot-pin',
+          html: `<div style="background-color: ${bgHex}; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; border: 2px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.4); font-size: 13px;">🎣</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -14]
+        });
+
+        const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(fishingMap);
+
+        const popupContent = `
+          <div style="font-size: 12px; line-height: 1.4; padding: 2px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+              <strong style="font-size: 13px; color: #38bdf8;">${escapeHtml(spot.name)}</strong>
+              <span style="font-size: 9px; padding: 1px 6px; border-radius: 9999px; background: rgba(56,189,248,0.2); color: #38bdf8; font-weight: 700;">${escapeHtml(spot.category)}</span>
+            </div>
+            <div style="margin-bottom: 4px; color: #fbbf24;"><strong>🐟 Sasaran:</strong> ${escapeHtml(spot.targetFish)}</div>
+            <div style="margin-bottom: 6px; font-size: 11px; opacity: 0.85;">${escapeHtml(spot.facilities || spot.notes || 'Spot pilihan pemancing.')}</div>
+            <div style="display: flex; gap: 4px; margin-top: 6px;">
+              <button onclick="copySpotCoords(${spot.lat}, ${spot.lng})" style="background: #0284c7; color: #ffffff; border: none; padding: 3px 8px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: 600;">Salin Koordinat</button>
+              <a href="https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}" target="_blank" rel="noopener noreferrer" style="background: #334155; color: #f8fafc; text-decoration: none; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 600; display: inline-flex; align-items: center;">Buka Peta Luar</a>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+        fishingMapMarkers.push(marker);
+      });
+    }
+
+    function renderSpotsCardList(list) {
+      const container = document.getElementById('spotsCardList');
+      if (!container) return;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center text-xs text-slate-500 py-4 italic">Tiada spot memancing ditemui.</div>';
+        return;
+      }
+
+      container.innerHTML = list.map(spot => {
+        let distBadge = '';
+        if (userCoordinates) {
+          const d = calculateDistanceKm(userCoordinates.lat, userCoordinates.lng, spot.lat, spot.lng);
+          distBadge = `<span class="badge-chip bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] py-0 px-1.5 font-mono">📍 ${d.toFixed(1)} km</span>`;
+        }
+
+        return `
+          <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3.5 hover:border-ocean-500/50 transition cursor-pointer flex flex-col justify-between" onclick="flyToSpot(${spot.lat}, ${spot.lng})">
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-1">
+                <span class="font-bold text-white text-xs truncate">${escapeHtml(spot.name)}</span>
+                ${distBadge}
+              </div>
+              <div class="text-[10px] text-slate-400 font-semibold mb-1.5">
+                <span class="text-ocean-300">${escapeHtml(spot.category)}</span> • ${escapeHtml(spot.state || 'Malaysia')}
+              </div>
+              <p class="text-[11px] text-amber-300 font-medium truncate">🐟 ${escapeHtml(spot.targetFish)}</p>
+            </div>
+            <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-slate-800 text-[10px] text-slate-400">
+              <span class="font-mono text-[9px]">${spot.lat.toFixed(3)}, ${spot.lng.toFixed(3)}</span>
+              <span class="text-ocean-400 font-bold hover:underline">Tunjuk Pin ➜</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function flyToSpot(lat, lng) {
+      if (!fishingMap) return;
+      fishingMap.flyTo([lat, lng], 13, { duration: 1.5 });
+      
+      // Auto open popup matching lat, lng
+      const targetMarker = fishingMapMarkers.find(m => {
+        const pos = m.getLatLng();
+        return Math.abs(pos.lat - lat) < 0.0001 && Math.abs(pos.lng - lng) < 0.0001;
+      });
+      if (targetMarker) {
+        setTimeout(() => {
+          targetMarker.openPopup();
+        }, 1600);
+      }
+    }
+
+    function resetMapView() {
+      if (!fishingMap) return;
+      fishingMap.flyTo([3.8, 102.5], 7, { duration: 1 });
+    }
+
+    function filterSpotsOnMap() {
+      const query = (document.getElementById('searchSpotQuery').value || '').toLowerCase();
+      const cat = document.getElementById('filterSpotCategory').value;
+
+      let filtered = spotsList.filter(s => {
+        const matchCat = (cat === 'ALL' || s.category === cat);
+        const matchQuery = !query || 
+          s.name.toLowerCase().includes(query) ||
+          (s.state && s.state.toLowerCase().includes(query)) ||
+          s.targetFish.toLowerCase().includes(query);
+        return matchCat && matchQuery;
+      });
+
+      renderMapSpotsOnMap(filtered);
+      renderSpotsCardList(filtered);
+    }
+
+    function locateUserFishingSpot() {
+      if (!navigator.geolocation) {
+        showToast('Pelayar web ini tidak menyokong fungsi Geolocation.', 'error');
+        return;
+      }
+
+      showToast('Mendapatkan lokasi semasa anda...', 'info');
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          userCoordinates = { lat, lng };
+
+          if (!fishingMap) initFishingMap();
+
+          // Remove existing user marker if any
+          if (userLocationMarker) {
+            fishingMap.removeLayer(userLocationMarker);
+          }
+
+          // Pulse marker for user
+          const userPulseIcon = L.divIcon({
+            className: 'custom-pulse-wrapper',
+            html: '<div class="custom-pulse-marker"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          });
+
+          userLocationMarker = L.marker([lat, lng], { icon: userPulseIcon }).addTo(fishingMap);
+          userLocationMarker.bindPopup(`
+            <div style="font-size: 11px; padding: 2px; text-align: center;">
+              <strong style="color: #38bdf8;">📍 Anda Berada Di Sini</strong>
+              <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">${lat.toFixed(4)}, ${lng.toFixed(4)}</div>
+            </div>
+          `).openPopup();
+
+          fishingMap.flyTo([lat, lng], 11, { duration: 1.5 });
+
+          // Find nearest fishing spot
+          let nearestSpot = null;
+          let shortestDist = Infinity;
+
+          spotsList.forEach(s => {
+            const d = calculateDistanceKm(lat, lng, s.lat, s.lng);
+            if (d < shortestDist) {
+              shortestDist = d;
+              nearestSpot = s;
+            }
+          });
+
+          const banner = document.getElementById('userLocationBanner');
+          const bannerText = document.getElementById('userLocationText');
+          const nearestBadge = document.getElementById('userNearestSpotBadge');
+
+          if (banner && nearestSpot) {
+            banner.classList.remove('hidden');
+            bannerText.innerText = `Lokasi GPS dikesan (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
+            nearestBadge.innerText = `Spot Terdekat: ${nearestSpot.name} (${shortestDist.toFixed(1)} km)`;
+          }
+
+          renderSpotsCardList(spotsList);
+          showToast(`Lokasi dikesan! Spot terdekat: ${nearestSpot ? nearestSpot.name : '-'}`);
+        },
+        (err) => {
+          showToast('Gagal mengakses lokasi semasa. Sila pastikan kebenaran GPS diaktifkan.', 'error');
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      );
+    }
+
+    function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    function copySpotCoords(lat, lng) {
+      copyToClipboardFallback(`${lat}, ${lng}`);
+      showToast(`Koordinat ${lat}, ${lng} disalin!`);
+    }
+
+    function toggleAddSpotModal() {
+      const modal = document.getElementById('modalSpot');
+      const form = document.getElementById('formSpot');
+
+      if (modal.classList.contains('hidden')) {
+        form.reset();
+        // If user already located, prefill latitude & longitude
+        if (userCoordinates) {
+          document.getElementById('spotLatInput').value = userCoordinates.lat.toFixed(4);
+          document.getElementById('spotLngInput').value = userCoordinates.lng.toFixed(4);
+        }
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function handleSaveSpot(e) {
+      e.preventDefault();
+      const name = document.getElementById('spotNameInput').value.trim();
+      const category = document.getElementById('spotCategoryInput').value;
+      const lat = parseFloat(document.getElementById('spotLatInput').value);
+      const lng = parseFloat(document.getElementById('spotLngInput').value);
+      const targetFish = document.getElementById('spotTargetInput').value.trim();
+      const facilities = document.getElementById('spotFacilityInput').value.trim();
+
+      if (!name || isNaN(lat) || isNaN(lng)) {
+        showToast('Sila lengkapkan nama dan koordinat spot yang sah!', 'error');
+        return;
+      }
+
+      const newSpot = {
+        id: 'spot_' + Date.now(),
+        name,
+        category,
+        state: 'Spot Pilihan',
+        lat,
+        lng,
+        targetFish,
+        facilities,
+        notes: facilities || 'Spot memancing baharu.'
+      };
+
+      spotsList.unshift(newSpot);
+      saveSpotsData();
+      toggleAddSpotModal();
+      filterSpotsOnMap();
+      flyToSpot(lat, lng);
+      showToast(`Spot "${name}" berjaya ditambah ke dalam peta!`);
     }
 
     // Escape helper
