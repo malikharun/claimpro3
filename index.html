@@ -1,0 +1,3243 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fishing Buddies — Members Claim & Trip Expense Generator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- FreeImage.host Upload Plugin SDK -->
+  <script async src="https://freeimage.host/sdk/pup.js" data-url="https://freeimage.host/upload"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            ocean: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+              950: '#082f49',
+            },
+            amberSea: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Styling & Print Optimizations */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 11pt;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .print-break-inside-avoid {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .print-card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+      }
+    }
+
+    /* Custom Scrollbar for tables and app */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+
+    .badge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* ================= TEMA TERANG: MARIN & MEMANCING (OCEAN & NAUTICAL THEME) ================= */
+    body.theme-light {
+      background-color: #f1f6fb !important;
+      color: #1e293b !important;
+      background-image: radial-gradient(#d4e5f5 0.75px, transparent 0.75px), radial-gradient(#d4e5f5 0.75px, #f1f6fb 0.75px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+
+    /* Header Tema Terang: Navi Blue */
+    body.theme-light header {
+      background-color: #0b2239 !important; /* Navi Blue */
+      border-bottom-color: #173b5c !important;
+      color: #ffffff !important;
+      box-shadow: 0 4px 20px -2px rgba(11, 34, 57, 0.25) !important;
+    }
+    body.theme-light header .text-white {
+      color: #ffffff !important;
+    }
+    body.theme-light header button:not(.bg-ocean-600) {
+      background-color: #133352 !important;
+      border-color: #1f476e !important;
+      color: #e2f1fc !important;
+    }
+    body.theme-light header button:not(.bg-ocean-600):hover {
+      background-color: #1a436b !important;
+      color: #ffffff !important;
+    }
+
+    /* Sub-Nav Bar dalam Tema Terang */
+    body.theme-light nav {
+      background-color: #081a2c !important;
+      border-bottom-color: #153654 !important;
+    }
+    body.theme-light nav button.nav-tab-active,
+    body.theme-light nav button.bg-ocean-600 {
+      background-color: #0284c7 !important;
+      color: #ffffff !important;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35) !important;
+    }
+    body.theme-light nav button:not(.bg-ocean-600):not(.nav-tab-active) {
+      color: #9ec5e8 !important;
+    }
+    body.theme-light nav button:not(.bg-ocean-600):not(.nav-tab-active):hover {
+      background-color: #133352 !important;
+      color: #ffffff !important;
+    }
+
+    /* Kad & Seksyen Marin Terang */
+    body.theme-light section,
+    body.theme-light #tab-dashboard > div,
+    body.theme-light #tab-expenses > div,
+    body.theme-light #tab-gallery > div,
+    body.theme-light #tab-history > div,
+    body.theme-light .bg-slate-800,
+    body.theme-light .bg-slate-800\/80,
+    body.theme-light .bg-slate-800\/90 {
+      background-color: #ffffff !important;
+      border-color: #cfe2ee !important;
+      box-shadow: 0 4px 20px -3px rgba(12, 74, 110, 0.08) !important;
+    }
+
+    /* Gradient Cards pada Dashboard */
+    body.theme-light .bg-gradient-to-br.from-slate-800.to-slate-900 {
+      background: linear-gradient(135deg, #ffffff 0%, #f4f9fd 100%) !important;
+      border-color: #cfe2ee !important;
+      box-shadow: 0 4px 16px -2px rgba(12, 74, 110, 0.08) !important;
+    }
+
+    /* Kotak Kecil / Sub-containers / Pills */
+    body.theme-light .bg-slate-900\/60,
+    body.theme-light .bg-slate-900\/70,
+    body.theme-light .bg-slate-900\/80,
+    body.theme-light .bg-slate-900\/50,
+    body.theme-light .bg-slate-900\/40,
+    body.theme-light .bg-slate-900,
+    body.theme-light .bg-slate-950 {
+      background-color: #f3f8fd !important;
+      border-color: #cfe2ee !important;
+    }
+
+    /* Tajuk & Headings */
+    body.theme-light h1,
+    body.theme-light h2,
+    body.theme-light h3,
+    body.theme-light h4,
+    body.theme-light h5 {
+      color: #0c2b4e !important;
+    }
+
+    /* Teks Muted */
+    body.theme-light .text-slate-400 {
+      color: #4b6682 !important;
+    }
+    body.theme-light .text-slate-300 {
+      color: #1e3a58 !important;
+    }
+    body.theme-light .text-slate-200 {
+      color: #0f2942 !important;
+    }
+
+    /* Warna Teks Metrik dan Penunjuk */
+    body.theme-light .text-white:not(header *):not(.bg-ocean-600 *):not(button.bg-ocean-600):not(.badge-chip *):not(#toast *):not(.nav-tab-active *):not(.bg-emerald-600 *):not(.bg-purple-600 *):not(.bg-cyan-600 *):not(.bg-sky-600 *):not(.bg-sky-700 *) {
+      color: #0c2b4e !important;
+    }
+    body.theme-light .text-emerald-400 {
+      color: #059669 !important;
+    }
+    body.theme-light .text-amber-400 {
+      color: #d97706 !important;
+    }
+    body.theme-light .text-purple-400 {
+      color: #7c3aed !important;
+    }
+    body.theme-light .text-ocean-400 {
+      color: #0284c7 !important;
+    }
+    body.theme-light .text-cyan-400 {
+      color: #0891b2 !important;
+    }
+
+    /* Input & Select */
+    body.theme-light input:not([type="checkbox"]):not([type="radio"]),
+    body.theme-light select,
+    body.theme-light textarea {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0c2b4e !important;
+    }
+    body.theme-light input::placeholder,
+    body.theme-light textarea::placeholder {
+      color: #94a3b8 !important;
+    }
+    body.theme-light input:focus,
+    body.theme-light select:focus,
+    body.theme-light textarea:focus {
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+    }
+    body.theme-light input[readonly] {
+      background-color: #f3f8fd !important;
+      border-color: #cfe2ee !important;
+    }
+
+    /* Jadual (Tables) */
+    body.theme-light thead,
+    body.theme-light thead.bg-slate-900\/90,
+    body.theme-light thead.bg-slate-900\/95 {
+      background-color: #e3eff9 !important;
+      border-bottom-color: #cfe2ee !important;
+    }
+    body.theme-light th {
+      color: #0c2b4e !important;
+    }
+    body.theme-light tbody.divide-slate-700\/60 {
+      border-color: #cfe2ee !important;
+    }
+    body.theme-light tbody tr {
+      background-color: #ffffff !important;
+      border-color: #eaf1f8 !important;
+      color: #1e293b !important;
+    }
+    body.theme-light tbody tr:hover {
+      background-color: #f1f7fd !important;
+    }
+    body.theme-light tfoot,
+    body.theme-light tfoot.bg-slate-900\/90 {
+      background-color: #e3eff9 !important;
+      border-color: #cfe2ee !important;
+      color: #0c2b4e !important;
+    }
+
+    /* Badges & Chips */
+    body.theme-light .badge-chip.bg-slate-700 {
+      background-color: #e2edf7 !important;
+      color: #1e3a58 !important;
+    }
+    body.theme-light .bg-slate-700\/70 {
+      background-color: #e4eff8 !important;
+      border-color: #c8deee !important;
+      color: #0c2b4e !important;
+    }
+    body.theme-light .bg-slate-700 {
+      background-color: #e2edf7 !important;
+      border-color: #c8deee !important;
+      color: #1e3a58 !important;
+    }
+
+    /* Modals */
+    body.theme-light #modalExpense > div,
+    body.theme-light #modalAdvance > div,
+    body.theme-light #modalPhoto > div,
+    body.theme-light #modalTideLink > div {
+      background-color: #ffffff !important;
+      border-color: #cfe2ee !important;
+      box-shadow: 0 25px 50px -12px rgba(12, 74, 110, 0.25) !important;
+    }
+    body.theme-light #modalExpense > div label,
+    body.theme-light #modalAdvance > div label,
+    body.theme-light #modalPhoto > div label,
+    body.theme-light #modalTideLink > div label {
+      color: #1e3a58 !important;
+    }
+    body.theme-light #modalExpenseTitle,
+    body.theme-light #modalAdvance h3,
+    body.theme-light #modalPhoto h3,
+    body.theme-light #modalTideTitle {
+      color: #0c2b4e !important;
+    }
+
+    /* Footer Tema Terang: Navi Blue */
+    body.theme-light footer {
+      background-color: #0b2239 !important;
+      border-top-color: #173b5c !important;
+      color: #94a3b8 !important;
+    }
+    body.theme-light footer p {
+      color: #cbd5e1 !important;
+    }
+
+    /* Toast */
+    body.theme-light #toast {
+      background-color: #0b2239 !important;
+      border-color: #173b5c !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-ocean-500 selection:text-white transition-colors duration-200">
+
+  <!-- ================= TOP NAV BAR ================= -->
+  <header class="no-print bg-slate-950/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 transition-colors">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-1 sm:gap-2">
+      
+      <!-- Logo & Brand (Logo Ikan / Memancing & Tajuk Bertindan Atas Bawah) -->
+      <div class="flex items-center space-x-2 sm:space-x-3 cursor-pointer shrink-0" onclick="switchTab('dashboard')">
+        <!-- Logo Ikan Memancing -->
+        <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-tr from-ocean-600 via-sky-500 to-emerald-400 flex items-center justify-center text-white shadow-lg shadow-ocean-500/25 shrink-0 transition-transform active:scale-95" title="Fishing Buddies Dashboard">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.5 12c.94-3.46 4.94-6 8.5-6 3.56 0 6.06 2.54 7 6-.94 3.47-3.44 6-7 6s-7.56-2.53-8.5-6Z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12v.5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17.93a9.77 9.77 0 0 1 0-11.86"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 10.67C7 8 5.58 5.97 2.73 4c-1 1.5-1 3.5 0 5 1.5 2 1.5 4 0 6-1 1.5-1 3.5 0 5 2.85-1.97 4.27-4 4.27-6.67v-2.66Z"/>
+            <circle cx="16.5" cy="9.5" r="1" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <!-- Tajuk Bertindan Atas Bawah (FISHING di atas, BUDDIES di bawah) -->
+        <div class="flex flex-col justify-center leading-none select-none">
+          <div class="flex items-center gap-1.5">
+            <div class="flex flex-col leading-none">
+              <span class="font-black text-xs sm:text-base tracking-wider text-white leading-none">FISHING</span>
+              <span class="font-black text-[11px] sm:text-sm tracking-tight text-ocean-400 leading-none mt-0.5">BUDDIES</span>
+            </div>
+            <span class="hidden md:inline-block text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-ocean-500/20 text-ocean-400 border border-ocean-500/30 ml-1">Claim Pro</span>
+          </div>
+          <p class="text-[10px] text-slate-400 hidden lg:block mt-1">Pengurus Tuntutan & Kos Trip Memancing</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons (Responsive & Tiada Overflow pada Skrin Telefon) -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <!-- Butang Kawalan Tema (Gelap / Marin Terang) -->
+        <button id="themeToggleBtn" onclick="toggleTheme()" class="p-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1 sm:gap-1.5 transition shrink-0" title="Tukar Tema (Gelap / Marin Terang)" aria-label="Tukar Tema">
+          <span id="themeToggleIcon" class="w-4 h-4 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          </span>
+          <span id="themeToggleText" class="hidden sm:inline">Tema Gelap</span>
+        </button>
+
+        <!-- Butang Trip Baharu -->
+        <button onclick="createNewTrip()" class="p-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1 sm:gap-1.5 transition shrink-0" title="Buka Trip Baharu">
+          <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span class="hidden sm:inline">Trip Baharu</span>
+        </button>
+
+        <!-- Butang Simpan -->
+        <button onclick="saveCurrentTrip(true)" class="px-2.5 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg bg-ocean-600 hover:bg-ocean-500 text-white shadow-md shadow-ocean-600/30 flex items-center gap-1 sm:gap-1.5 transition shrink-0" title="Simpan Trip">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+          </svg>
+          <span>Simpan</span>
+        </button>
+
+        <!-- Butang Cetak / PDF -->
+        <button onclick="window.print()" class="p-1.5 sm:px-3 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1 sm:gap-1.5 transition shrink-0" title="Cetak / Simpan PDF">
+          <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          </svg>
+          <span class="hidden md:inline">Cetak Dokumen</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= NAVIGATION TABS (Mobile Friendly) ================= -->
+  <nav class="no-print bg-slate-950 border-b border-slate-800 sticky top-16 z-30 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-3 overflow-x-auto py-2">
+      <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="nav-tab-active flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        <span>Ringkasan & Metrik</span>
+      </button>
+
+      <button onclick="switchTab('expenses')" id="tab-btn-expenses" class="nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span>Entri Perbelanjaan & Advances</span>
+      </button>
+
+      <button onclick="switchTab('claims')" id="tab-btn-claims" class="nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        <span>Laporan & Baucar Rasmi</span>
+      </button>
+
+      <button onclick="switchTab('gallery')" id="tab-btn-gallery" class="nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <span>Foto Kenangan & Pasang Surut</span>
+      </button>
+
+      <button onclick="switchTab('history')" id="tab-btn-history" class="nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span>Sejarah & Arkib Trip</span>
+        <span id="historyBadge" class="bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded-full text-xs">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================= NOTIFICATION TOAST ================= -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm w-full bg-slate-800 border border-slate-700 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3">
+    <div id="toastIcon" class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div class="flex-1 text-sm font-medium" id="toastMessage">Tindakan berjaya</div>
+  </div>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ================= SECTION: TRIP DETAILS HEADER (COLLAPSIBLE / EDITABLE) ================= -->
+    <section class="bg-slate-800/80 backdrop-blur border border-slate-700/80 rounded-2xl p-4 sm:p-6 shadow-xl relative overflow-hidden transition-all">
+      <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-ocean-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700/60 pb-4 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 text-[11px] font-bold uppercase rounded-md bg-ocean-500/20 text-ocean-300 border border-ocean-500/40">Maklumat Semasa Trip</span>
+            <span id="tripStatusBadge" class="badge-chip bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Aktif & Buka</span>
+          </div>
+          <h1 id="headerTripTitle" class="text-xl sm:text-2xl font-black text-white mt-1 tracking-tight">Trip Memancing Rompin Billfish & Tenggiri</h1>
+          <p id="headerTripSubtitle" class="text-xs sm:text-sm text-slate-400">Jeti Kuala Rompin | 14 - 15 Ogos 2026</p>
+        </div>
+
+        <div class="flex items-center gap-2 self-start md:self-auto">
+          <button onclick="toggleTripDetailsForm()" id="btnToggleTripEdit" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs rounded-lg flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+            <span id="btnToggleTripEditText">Kemaskini Maklumat Trip</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Form for Trip Info -->
+      <div id="tripInfoForm" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Nama / Tajuk Trip</label>
+          <input type="text" id="tripName" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500" placeholder="Cth: Trip Jigging Tuas Yan">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Lokasi / Jeti / Spot</label>
+          <input type="text" id="tripLocation" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500" placeholder="Cth: Jeti Merbok / Tuas 1-4">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Tarikh Mula</label>
+          <input type="date" id="tripStartDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Tarikh Tamat</label>
+          <input type="date" id="tripEndDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Nama Bot / Tekong</label>
+          <input type="text" id="tripBoatLeader" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500" placeholder="Cth: Bot Pak Din Strike / 012-3456789">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Penganjur / Bendahari Trip</label>
+          <input type="text" id="tripTreasurer" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500" placeholder="Cth: Capt. Razak">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs font-semibold text-slate-400 mb-1">Nota Tambahan / Peraturan Tuntutan</label>
+          <input type="text" id="tripNotes" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-ocean-500" placeholder="Cth: Kos bot & umpan dikongsi sama rata antara 5 pemancing">
+        </div>
+      </div>
+
+      <!-- Quick Summary Pills -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-center">
+        <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50">
+          <span class="text-[11px] text-slate-400 uppercase font-medium">Jumlah Peserta</span>
+          <p id="pillTotalMembers" class="text-base sm:text-lg font-black text-ocean-400 mt-0.5">0 Orang</p>
+        </div>
+        <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50">
+          <span class="text-[11px] text-slate-400 uppercase font-medium">Jumlah Kos Trip</span>
+          <p id="pillTotalExpenses" class="text-base sm:text-lg font-black text-amber-400 mt-0.5 font-mono">RM 0.00</p>
+        </div>
+        <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50">
+          <span class="text-[11px] text-slate-400 uppercase font-medium">Kos / Seorang</span>
+          <p id="pillCostPerMember" class="text-base sm:text-lg font-black text-emerald-400 mt-0.5 font-mono">RM 0.00</p>
+        </div>
+        <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50">
+          <span class="text-[11px] text-slate-400 uppercase font-medium">Baki Wang Pendahuluan</span>
+          <p id="pillTotalAdvances" class="text-base sm:text-lg font-black text-purple-400 mt-0.5 font-mono">RM 0.00</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 1: DASHBOARD & METRICS ================= -->
+    <div id="tab-dashboard" class="space-y-6">
+      
+      <!-- Key Metric Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Total Trip Cost Card -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Jumlah Perbelanjaan</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="cardTotalExpense" class="text-2xl font-black text-white font-mono tracking-tight">RM 0.00</h3>
+            <p id="cardExpenseCount" class="text-xs text-slate-400 mt-1">0 Item direkodkan</p>
+          </div>
+        </div>
+
+        <!-- Total Advances Collected -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Jumlah Advances/Deposit</span>
+            <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="cardTotalAdvances" class="text-2xl font-black text-purple-400 font-mono tracking-tight">RM 0.00</h3>
+            <p id="cardAdvanceCount" class="text-xs text-slate-400 mt-1">Dikutip awal daripada ahli</p>
+          </div>
+        </div>
+
+        <!-- Net Outstanding / Pool Balance -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Baki Wang Pendahuluan</span>
+            <div id="cardPoolBadge" class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="cardPoolBalance" class="text-2xl font-black text-white font-mono tracking-tight">RM 0.00</h3>
+            <p id="cardPoolDesc" class="text-xs text-slate-400 mt-1">Baki wang pendahuluan semasa</p>
+          </div>
+        </div>
+
+        <!-- Equal Share Per Head -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Kadar Sepatutnya (Seorang)</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </div>
+          </div>
+          <div class="mt-3">
+            <h3 id="cardPerMemberShare" class="text-2xl font-black text-emerald-400 font-mono tracking-tight">RM 0.00</h3>
+            <p id="cardMemberCountDesc" class="text-xs text-slate-400 mt-1">Berdasarkan agihan sama rata</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Category Breakdown & Quick Visual Progress -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Category Breakdown Chart & Progress Bars -->
+        <div class="lg:col-span-2 bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg">
+          <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-700/60">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                Pecahan Perbelanjaan Mengikut Kategori
+              </h3>
+              <p class="text-xs text-slate-400">Analisis peruntukan bajet memancing</p>
+            </div>
+            <span id="highestCategoryBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-700 text-slate-300">Utama: Sewa Bot</span>
+          </div>
+
+          <!-- Dynamic Category List with Progress bars -->
+          <div id="categoryBarsContainer" class="space-y-3.5">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Quick Summary of Members Status -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-700/60">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                Status Ringkas Ahli
+              </h3>
+              <span class="text-xs text-slate-400" id="dashMembersCount">0 Ahli</span>
+            </div>
+
+            <div id="dashboardMembersMiniList" class="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
+              <!-- Injected by JS -->
+            </div>
+          </div>
+
+          <button onclick="switchTab('claims')" class="mt-4 w-full py-2.5 bg-slate-700/70 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-600 transition flex items-center justify-center gap-1.5">
+            <span>Buka Laporan Penuh & Pembayaran</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Settlement Matrix Preview (Siapa Perlu Bayar Kepada Siapa) -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+              Pelan Penyelarasan Bayaran (Settlement Flow)
+            </h3>
+            <p class="text-xs text-slate-400">Cara paling mudah & pantas untuk melangsaikan baki sesama peserta tanpa keliru</p>
+          </div>
+        </div>
+
+        <div id="settlementFlowContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 2: ENTRI PERBELANJAAN, ADVANCES & PESERTA ================= -->
+    <div id="tab-expenses" class="hidden space-y-6">
+
+      <!-- Manage Members Bar -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              Senarai Peserta Trip (Fishing Buddies)
+            </h3>
+            <p class="text-xs text-slate-400">Masukkan nama rakan pancing yang terlibat dalam trip ini</p>
+          </div>
+          
+          <!-- Add Member Input -->
+          <form id="formAddMember" onsubmit="handleAddMember(event)" class="flex gap-2">
+            <input type="text" id="inputNewMemberName" placeholder="Nama rakan (Cth: Cikgu Lan)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-ocean-500 w-44 sm:w-56" required>
+            <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+              <span>Tambah</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Member Badges List -->
+        <div id="membersChipContainer" class="flex flex-wrap gap-2 pt-2">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Advances / Deposit Paid by Members -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Rekod Pendahuluan (Advances / Deposit / Duit Poket Awal)
+            </h3>
+            <p class="text-xs text-slate-400">Bayaran deposit awal yang telah diserahkan oleh ahli kepada bendahari atau tekong bot</p>
+          </div>
+          <button onclick="toggleAdvanceFormModal()" class="px-3.5 py-1.5 bg-purple-700 hover:bg-purple-600 text-white text-xs sm:text-sm font-medium rounded-lg flex items-center gap-1.5 transition self-start sm:self-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Rekod Advance Baharu</span>
+          </button>
+        </div>
+
+        <!-- Advances Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-700/80">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[11px] font-semibold tracking-wider">
+              <tr>
+                <th class="py-3 px-4">Nama Peserta</th>
+                <th class="py-3 px-4">Keterangan / Tarikh</th>
+                <th class="py-3 px-4 text-right">Jumlah (RM)</th>
+                <th class="py-3 px-4 text-center">Kaedah / Resit</th>
+                <th class="py-3 px-4 text-center">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="advancesTableBody" class="divide-y divide-slate-700/60 bg-slate-800/40">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section: Expense Items Form & Table -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4 sm:p-5 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+              Item Perbelanjaan Trip (Claims & Kos)
+            </h3>
+            <p class="text-xs text-slate-400">Rekod semua kos sewa bot, minyak, ais, umpan hidup, tol dan makan</p>
+          </div>
+          
+          <button onclick="toggleExpenseFormModal()" class="px-3.5 py-1.5 bg-ocean-600 hover:bg-ocean-500 text-white text-xs sm:text-sm font-semibold rounded-lg flex items-center gap-1.5 transition self-start sm:self-auto">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>+ Tambah Perbelanjaan</span>
+          </button>
+        </div>
+
+        <!-- Filter & Search Bar for Expenses -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-3">
+          <div>
+            <input type="text" id="searchExpenseQuery" oninput="renderExpensesTable()" placeholder="Cari item (cth: Udang Hidup, Tol)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-ocean-500">
+          </div>
+          <div>
+            <select id="filterExpenseCategory" onchange="renderExpensesTable()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-ocean-500">
+              <option value="ALL">Semua Kategori</option>
+              <option value="Sewa Bot & Tekong">Sewa Bot & Tekong</option>
+              <option value="Rumah Rakit">Rumah Rakit</option>
+              <option value="Kelong">Kelong</option>
+              <option value="Campsite">Campsite</option>
+              <option value="Umpan Hidup / Mati">Umpan Hidup / Mati</option>
+              <option value="Minyak, Tol & Parkir">Minyak, Tol & Parkir</option>
+              <option value="Makanan, Minuman & Runcit">Makanan, Minuman & Runcit</option>
+              <option value="Ais, Tong & Garam">Ais, Tong & Garam</option>
+              <option value="Alatan, Lures & Bateri">Alatan, Lures & Bateri</option>
+              <option value="Tips Tekong & Krew">Tips Tekong & Krew</option>
+              <option value="Pelbagai">Pelbagai / Lain-lain</option>
+            </select>
+          </div>
+          <div>
+            <select id="filterExpensePayer" onchange="renderExpensesTable()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-ocean-500">
+              <option value="ALL">Semua Pembayar (Didahului Oleh)</option>
+              <!-- Populated dynamic -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Expense Table -->
+        <div class="overflow-x-auto rounded-xl border border-slate-700/80">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[11px] font-semibold tracking-wider">
+              <tr>
+                <th class="py-3 px-3">Item / Keterangan</th>
+                <th class="py-3 px-3">Kategori</th>
+                <th class="py-3 px-3">Didahului Oleh</th>
+                <th class="py-3 px-2 text-center">Kuantiti</th>
+                <th class="py-3 px-3 text-right">Harga Unit</th>
+                <th class="py-3 px-3 text-right">Jumlah (RM)</th>
+                <th class="py-3 px-2 text-center">Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody" class="divide-y divide-slate-700/60 bg-slate-800/40">
+              <!-- Injected by JS -->
+            </tbody>
+            <tfoot class="bg-slate-900/90 font-semibold text-white">
+              <tr>
+                <td colspan="5" class="py-3 px-3 text-right text-xs uppercase tracking-wider text-slate-400">Jumlah Keseluruhan Perbelanjaan:</td>
+                <td id="tableTotalExpenseValue" class="py-3 px-3 text-right font-mono text-amber-400 font-bold text-sm">RM 0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 3: LAPORAN DOKUMEN TUNTUTAN & BAUCAR RASMI ================= -->
+    <div id="tab-claims" class="hidden space-y-6">
+
+      <!-- Action Toolbar (Export / Print / Copy) -->
+      <div class="no-print bg-slate-800/90 border border-slate-700 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-lg">
+        <div>
+          <h3 class="text-sm sm:base font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Format Laporan Rasmi Memancing (Printable Claim Voucher)
+          </h3>
+          <p class="text-xs text-slate-400">Boleh dicetak ke PDF atau dikongsi dalam grup WhatsApp dengan salinan teks kemas</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="copyTripClaimSummaryText()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span>Salin Format WhatsApp</span>
+          </button>
+
+          <button onclick="exportToCSV()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Eksport CSV / Excel</span>
+          </button>
+
+          <button onclick="window.print()" class="px-4 py-2 bg-ocean-600 hover:bg-ocean-500 text-white text-xs font-bold rounded-lg shadow flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            <span>Cetak / Cetak PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PRINTABLE INVOICE / CLAIM DOCUMENT CONTAINER -->
+      <div id="printableClaimDocument" class="bg-white text-slate-900 rounded-2xl p-6 sm:p-10 shadow-2xl border border-slate-200 print-card font-sans">
+        
+        <!-- Document Header -->
+        <div class="border-b-2 border-slate-900 pb-6 mb-6">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-2xl font-black tracking-tight text-slate-900 uppercase">FISHING BUDDIES CLUB</span>
+                <span class="text-xs bg-slate-900 text-white px-2 py-0.5 font-bold rounded">PENYATA RASMI</span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium mt-0.5">Sistem Pengurusan & Penyata Tuntutan Perbelanjaan Trip Memancing</p>
+            </div>
+            <div class="text-left sm:text-right">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">No. Rujukan Trip</span>
+              <p id="docRefNo" class="text-base font-bold font-mono text-slate-800">FB-TRIP-2026-001</p>
+              <p id="docGeneratedDate" class="text-xs text-slate-500">Tarikh Jana: 07 Nov 2026</p>
+            </div>
+          </div>
+
+          <!-- Trip Metadata Box -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+            <div>
+              <span class="text-slate-400 font-semibold block uppercase text-[10px]">Nama Trip</span>
+              <span id="docTripName" class="font-bold text-slate-900 text-sm">Trip Jigging Tuas Yan</span>
+            </div>
+            <div>
+              <span class="text-slate-400 font-semibold block uppercase text-[10px]">Lokasi / Bot</span>
+              <span id="docTripLocation" class="font-medium text-slate-800">Jeti Rompin (Bot Pak Din)</span>
+            </div>
+            <div>
+              <span class="text-slate-400 font-semibold block uppercase text-[10px]">Tarikh Trip</span>
+              <span id="docTripDates" class="font-medium text-slate-800">14 Ogos 2026 - 15 Ogos 2026</span>
+            </div>
+            <div>
+              <span class="text-slate-400 font-semibold block uppercase text-[10px]">Ketua / Bendahari</span>
+              <span id="docTripTreasurer" class="font-medium text-slate-800">Capt. Razak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABLE 1: SUMMARY PER PARTICIPANT (RINGKASAN TUNTUTAN SETIAP AHLI) -->
+        <div class="mb-8 print-break-inside-avoid">
+          <h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5 border-b pb-1">
+            <span>1. Ringkasan Akaun & Status Tuntutan Setiap Peserta</span>
+          </h4>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] border-y border-slate-300">
+                  <th class="py-2.5 px-3">Nama Peserta</th>
+                  <th class="py-2.5 px-3 text-right">Advance Diberi (A)</th>
+                  <th class="py-2.5 px-3 text-right">Perbelanjaan Didahului (B)</th>
+                  <th class="py-2.5 px-3 text-right">Jumlah Sumbangan (A+B)</th>
+                  <th class="py-2.5 px-3 text-right">Bahagian Kos Sebenar (C)</th>
+                  <th class="py-2.5 px-3 text-right">Status / Baki Tuntutan</th>
+                </tr>
+              </thead>
+              <tbody id="docMembersSummaryTbody" class="divide-y divide-slate-200">
+                <!-- Generated by JS -->
+              </tbody>
+              <tfoot>
+                <tr class="bg-slate-100 font-bold text-slate-900 border-t-2 border-slate-400 text-xs">
+                  <td class="py-2.5 px-3">JUMLAH KESELURUHAN</td>
+                  <td id="docFootTotalAdvances" class="py-2.5 px-3 text-right font-mono">RM 0.00</td>
+                  <td id="docFootTotalPaidExpenses" class="py-2.5 px-3 text-right font-mono">RM 0.00</td>
+                  <td id="docFootTotalContributed" class="py-2.5 px-3 text-right font-mono">RM 0.00</td>
+                  <td id="docFootTotalActualCost" class="py-2.5 px-3 text-right font-mono">RM 0.00</td>
+                  <td id="docFootTotalBalanceStatus" class="py-2.5 px-3 text-right text-emerald-700 font-mono font-black">SEIMBANG (RM 0.00)</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <p class="text-[10px] text-slate-500 mt-1 italic leading-relaxed">
+            * Nota Petunjuk: <span class="font-bold text-emerald-700">DAPAT BALIK / REFUND (+)</span> = Peserta layak menerima wang semula kerana membayar/mendahulukan lebih daripada kadar sepatutnya. <br>
+            * <span class="font-bold text-rose-700">PERLU BAYAR / TOPUP (-)</span> = Peserta perlu menambah bayaran bagi melengkapkan agihan kos trip.
+          </p>
+        </div>
+
+        <!-- TABLE 2: CATEGORY BREAKDOWN IN INVOICE -->
+        <div class="mb-8 print-break-inside-avoid">
+          <h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5 border-b pb-1">
+            <span>2. Pecahan Kos Mengikut Kategori Perbelanjaan</span>
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs" id="docCategoryGrid">
+            <!-- JS populated cards -->
+          </div>
+        </div>
+
+        <!-- TABLE 3: ITEMISED EXPENSES BREAKDOWN -->
+        <div class="mb-8 print-break-inside-avoid">
+          <h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5 border-b pb-1">
+            <span>3. Perincian Lengkap Resit & Perbelanjaan Trip</span>
+          </h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] border-y border-slate-300">
+                  <th class="py-2 px-2">Bil</th>
+                  <th class="py-2 px-3">Item / Butiran</th>
+                  <th class="py-2 px-3">Kategori</th>
+                  <th class="py-2 px-3">Didahului Oleh</th>
+                  <th class="py-2 px-2 text-center">Qty</th>
+                  <th class="py-2 px-3 text-right">Harga Unit</th>
+                  <th class="py-2 px-3 text-right">Jumlah (RM)</th>
+                </tr>
+              </thead>
+              <tbody id="docExpensesTbody" class="divide-y divide-slate-200">
+                <!-- JS populated -->
+              </tbody>
+              <tfoot>
+                <tr class="font-bold border-t-2 border-slate-400 bg-slate-50">
+                  <td colspan="6" class="py-2.5 px-3 text-right text-xs uppercase">Jumlah Bersih Perbelanjaan Trip:</td>
+                  <td id="docExpensesTotalGrand" class="py-2.5 px-3 text-right font-mono font-black text-sm text-slate-900">RM 0.00</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- SIGNATURE & VERIFICATION SECTION -->
+        <div class="pt-8 border-t border-slate-200 grid grid-cols-2 sm:grid-cols-3 gap-6 text-center text-xs print-break-inside-avoid">
+          <div>
+            <div class="h-14 border-b border-dashed border-slate-400 mb-1"></div>
+            <p class="font-bold text-slate-900" id="signTreasurerName">Disediakan Oleh Bendahari</p>
+            <p class="text-[10px] text-slate-500">Penyelaras Kewangan Trip</p>
+          </div>
+          <div>
+            <div class="h-14 border-b border-dashed border-slate-400 mb-1"></div>
+            <p class="font-bold text-slate-900" id="signBoatCaptain">Disahkan Oleh Tekong / Wakil</p>
+            <p class="text-[10px] text-slate-500">Pengesahan Sewa & Servis Bot</p>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <div class="h-14 border-b border-dashed border-slate-400 mb-1"></div>
+            <p class="font-bold text-slate-900">Wakil Peserta Memancing</p>
+            <p class="text-[10px] text-slate-500">Pengesahan Penerimaan Tuntutan</p>
+          </div>
+        </div>
+
+        <div class="mt-8 text-center text-[10px] text-slate-400">
+          Dokumen ini dijana secara digital melalui Fishing Buddies Members Claim Generator. Sah tanpa tandatangan fizikal sekiranya dipersetujui dalam sesi taklimat trip.
+        </div>
+
+        <!-- LAMPIRAN CETAKAN: JADUAL PASANG SURUT & FOTO KENANGAN UNTUK PDF -->
+        <div id="docPrintableAttachments" class="mt-10 pt-8 border-t-2 border-slate-900 print-break-inside-avoid">
+          <h4 class="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4 flex items-center gap-1.5 border-b pb-1">
+            <span>4. Lampiran: Foto Kenangan & Jadual Pasang Surut Trip</span>
+          </h4>
+
+          <!-- Trip Photos Print Section (Di bahagian atas lampiran) -->
+          <div class="mb-6">
+            <span class="text-xs font-bold text-slate-800 block mb-2">Album Foto Kenangan Terbaik</span>
+            <div id="docPhotosGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <!-- JS Populated Photos for Print -->
+            </div>
+          </div>
+
+          <!-- Tides Print Section (Di bahagian bawah lampiran) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
+              <span class="text-xs font-bold text-slate-800 block mb-1">Jadual Pasang Surut Mingguan</span>
+              <div id="docWeeklyTidePreview" class="w-full h-44 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
+                <span class="text-[11px] text-slate-400 italic">Tiada foto jadual mingguan dimuat naik</span>
+              </div>
+            </div>
+            <div class="border border-slate-200 rounded-xl p-3 bg-slate-50">
+              <span class="text-xs font-bold text-slate-800 block mb-1">Jadual Pasang Surut Harian</span>
+              <div id="docDailyTidePreview" class="w-full h-44 bg-slate-100 rounded-lg flex items-center justify-center overflow-hidden border border-slate-200">
+                <span class="text-[11px] text-slate-400 italic">Tiada foto jadual harian dimuat naik</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 3.5: FOTO KENANGAN & JADUAL PASANG SURUT ================= -->
+    <div id="tab-gallery" class="hidden space-y-6">
+
+      <!-- Header & Sync with freeimage.host -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Foto Kenangan & Jadual Pasang Surut Trip
+          </h3>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="window.print()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+            </svg>
+            <span>Cetak PDF Termasuk Foto</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KAD 1 (ATAS SEKALI): KOLEKSI FOTO KENANGAN TERBAIK TRIP -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-700/80 mb-4">
+          <div>
+            <h4 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+              </svg>
+              Koleksi Foto Kenangan Terbaik (Strike & Momen Trip)
+            </h4>
+            <p class="text-xs text-slate-400">Masukkan Direct Link foto strike dan momen trip yang telah dihoskan di FreeImage.host</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Butang Buka FreeImage Host -->
+            <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-700 hover:bg-sky-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Upload foto ke FreeImage.host dan dapatkan direct link">
+              <svg class="w-3.5 h-3.5 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/></svg>
+              <span>1. Hubungi FreeImage.host</span>
+            </a>
+            
+            <!-- Butang Masukkan Link Foto -->
+            <button onclick="toggleAddPhotoModal()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition shadow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              <span>2. Masukkan Direct Link Foto</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Photos Gallery Grid -->
+        <div id="photosGalleryContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- KAD 2 & 3 (BAHAGIAN BAWAH): JADUAL PASANG SURUT MINGGUAN & HARIAN -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Card: Jadual Pasang Surut Mingguan -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                <h4 class="text-sm font-bold text-white">Jadual Pasang Surut Mingguan</h4>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 font-semibold">Carta Mingguan</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Upload graf ramalan air mingguan ke FreeImage.host, kemudian masukkan direct link di bawah.</p>
+            
+            <div id="weeklyTideCardPreview" class="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-900/60 min-h-[190px] flex items-center justify-center mb-3 group">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/60">
+            <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-700 hover:bg-sky-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Upload foto jadual mingguan ke FreeImage.host">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <span>1. Hubungi FreeImage</span>
+            </a>
+            <button onclick="promptTideDirectLink('weekly')" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+              <span>2. Masukkan Direct Link</span>
+            </button>
+            <button onclick="removeTidePhoto('weekly')" id="btnRemoveWeeklyTide" class="hidden px-2.5 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-lg text-xs font-medium transition ml-auto">
+              Padam
+            </button>
+          </div>
+        </div>
+
+        <!-- Card: Jadual Pasang Surut Harian -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <h4 class="text-sm font-bold text-white">Jadual Pasang Surut Harian</h4>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold">Carta Hari Trip</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-3">Upload graf pasang surut harian trip ke FreeImage.host, kemudian masukkan direct link di bawah.</p>
+            
+            <div id="dailyTideCardPreview" class="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-900/60 min-h-[190px] flex items-center justify-center mb-3 group">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/60">
+            <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-700 hover:bg-sky-600 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Upload foto jadual harian ke FreeImage.host">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <span>1. Hubungi FreeImage</span>
+            </a>
+            <button onclick="promptTideDirectLink('daily')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/></svg>
+              <span>2. Masukkan Direct Link</span>
+            </button>
+            <button onclick="removeTidePhoto('daily')" id="btnRemoveDailyTide" class="hidden px-2.5 py-1.5 text-rose-400 hover:text-rose-300 hover:bg-rose-950/40 rounded-lg text-xs font-medium transition ml-auto">
+              Padam
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 4: REKOD SEJARAH & ARKIB TRIP ================= -->
+    <div id="tab-history" class="hidden space-y-6">
+      
+      <!-- Top Actions & Search for History -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-ocean-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Arkib Rekod Trip Terdahulu
+          </h3>
+          <p class="text-xs text-slate-400">Simpan, cari, pulihkan, isih (sort) atau semak semula semua rekod perbelanjaan trip memancing</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="searchHistoryInput" oninput="renderHistoryList()" placeholder="Cari nama trip, lokasi, no rujukan..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white focus:outline-none focus:border-ocean-500 w-52 sm:w-64">
+          
+          <button onclick="exportAllTripsJSON()" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition" title="Muat turun salinan sandaran (Backup)">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Backup Data</span>
+          </button>
+          
+          <label class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition cursor-pointer" title="Pulihkan data daripada fail JSON">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4-4m0 0l4 4m-4-4v12"/></svg>
+            <span>Import Data</span>
+            <input type="file" id="importJsonFileInput" accept=".json" class="hidden" onchange="importTripsJSON(event)">
+          </label>
+        </div>
+      </div>
+
+      <!-- History List: Tabular View with Sortable Headers -->
+      <div class="bg-slate-800/80 border border-slate-700 rounded-2xl shadow-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-900/95 text-slate-400 uppercase text-[11px] font-bold tracking-wider select-none border-b border-slate-700/80">
+              <tr>
+                <!-- Header: Trip -->
+                <th scope="col" onclick="setHistorySort('name')" class="py-3.5 px-4 cursor-pointer hover:text-white hover:bg-slate-800/60 transition group">
+                  <div class="flex items-center gap-1.5">
+                    <span>Trip</span>
+                    <span id="sort-icon-name" class="text-slate-500 group-hover:text-ocean-400">⇅</span>
+                  </div>
+                </th>
+                <!-- Header: Tarikh -->
+                <th scope="col" onclick="setHistorySort('startDate')" class="py-3.5 px-4 cursor-pointer hover:text-white hover:bg-slate-800/60 transition group">
+                  <div class="flex items-center gap-1.5">
+                    <span>Tarikh</span>
+                    <span id="sort-icon-startDate" class="text-slate-500 group-hover:text-ocean-400">⇅</span>
+                  </div>
+                </th>
+                <!-- Header: Peserta -->
+                <th scope="col" onclick="setHistorySort('membersCount')" class="py-3.5 px-4 cursor-pointer hover:text-white hover:bg-slate-800/60 transition group text-center">
+                  <div class="flex items-center justify-center gap-1.5">
+                    <span>Peserta</span>
+                    <span id="sort-icon-membersCount" class="text-slate-500 group-hover:text-ocean-400">⇅</span>
+                  </div>
+                </th>
+                <!-- Header: Jumlah Belanja -->
+                <th scope="col" onclick="setHistorySort('totalExpense')" class="py-3.5 px-4 cursor-pointer hover:text-white hover:bg-slate-800/60 transition group text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <span>Jumlah Belanja</span>
+                    <span id="sort-icon-totalExpense" class="text-slate-500 group-hover:text-ocean-400">⇅</span>
+                  </div>
+                </th>
+                <!-- Header: Kos/Pax -->
+                <th scope="col" onclick="setHistorySort('costPerPax')" class="py-3.5 px-4 cursor-pointer hover:text-white hover:bg-slate-800/60 transition group text-right">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <span>Kos/Pax</span>
+                    <span id="sort-icon-costPerPax" class="text-slate-500 group-hover:text-ocean-400">⇅</span>
+                  </div>
+                </th>
+                <!-- Header: Tindakan -->
+                <th scope="col" class="py-3.5 px-4 text-center">
+                  <span>Tindakan</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody" class="divide-y divide-slate-700/60 bg-slate-800/40">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ================= MODAL: TAMBAH / KEMASKINI EXPENSE ITEM ================= -->
+  <div id="modalExpense" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-5 sm:p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 id="modalExpenseTitle" class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-ocean-500"></span>
+          Tambah Perbelanjaan Trip
+        </h3>
+        <button onclick="toggleExpenseFormModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="formExpense" onsubmit="handleSaveExpense(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <input type="hidden" id="expEditId" value="">
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Item / Perkara *</label>
+          <input type="text" id="expItemName" placeholder="Cth: Sewa Bot & Minyak Enjin" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Kategori *</label>
+            <select id="expCategory" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+              <option value="Sewa Bot & Tekong">Sewa Bot & Tekong</option>
+              <option value="Rumah Rakit">Rumah Rakit</option>
+              <option value="Kelong">Kelong</option>
+              <option value="Campsite">Campsite</option>
+              <option value="Umpan Hidup / Mati">Umpan Hidup / Mati (Udang/Kurita)</option>
+              <option value="Minyak, Tol & Parkir">Minyak, Tol & Parkir</option>
+              <option value="Makanan, Minuman & Runcit">Makanan, Minuman & Runcit</option>
+              <option value="Ais, Tong & Garam">Ais, Tong & Garam</option>
+              <option value="Alatan, Lures & Bateri">Alatan, Lures & Bateri</option>
+              <option value="Tips Tekong & Krew">Tips Tekong & Krew</option>
+              <option value="Pelbagai">Pelbagai / Kecemasan</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Didahului Oleh (Pembayar) *</label>
+            <select id="expPaidBy" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+              <!-- Injected by members list -->
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Kuantiti *</label>
+            <input type="number" id="expQuantity" min="0.1" step="any" value="1" oninput="calculateModalExpenseTotal()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500 font-mono" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Harga Unit (RM) *</label>
+            <input type="number" id="expUnitPrice" min="0" step="any" placeholder="0.00" oninput="calculateModalExpenseTotal()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500 font-mono" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Jumlah (RM)</label>
+            <input type="text" id="expTotalAmount" readonly class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-amber-400 font-bold font-mono focus:outline-none" value="0.00">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Nota / No. Resit (Pilihan)</label>
+          <input type="text" id="expReceiptNote" placeholder="Cth: Resit Shell Rompin #3482" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="toggleExpenseFormModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-ocean-600 hover:bg-ocean-500 text-white font-semibold rounded-lg shadow-lg shadow-ocean-600/30 transition">Simpan Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: TAMBAH / KEMASKINI ADVANCE / DEPOSIT ================= -->
+  <div id="modalAdvance" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+          Rekod Bayaran Advance / Deposit
+        </h3>
+        <button onclick="toggleAdvanceFormModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="formAdvance" onsubmit="handleSaveAdvance(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <input type="hidden" id="advEditId" value="">
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Nama Peserta *</label>
+          <select id="advMemberName" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500" required>
+            <!-- Member options -->
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Jumlah Deposit / Advance (RM) *</label>
+          <input type="number" id="advAmount" min="0.01" step="any" placeholder="Cth: 150.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-mono" required>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Tarikh Bayaran Advance</label>
+          <input type="date" id="advDate" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Kaedah / Nota Pemindahan</label>
+          <input type="text" id="advNotes" placeholder="Cth: DuitNow Online Transfer / Duit Poket Bot" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="toggleAdvanceFormModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-lg shadow-lg shadow-purple-600/30 transition">Simpan Advance</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: TAMBAH FOTO KENANGAN TRIP ================= -->
+  <div id="modalPhoto" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+          Masukkan Direct Link Foto Kenangan
+        </h3>
+        <button onclick="toggleAddPhotoModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick FreeImage Upload Helper in Modal -->
+      <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 mb-4 flex items-center justify-between gap-2">
+        <div class="text-xs text-slate-300">
+          <span class="font-bold text-sky-400 block">Belum ada Direct Link?</span>
+          Upload gambar ke FreeImage.host & salin <span class="font-mono text-amber-300">Direct Link</span> URL.
+        </div>
+        <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold shrink-0 transition inline-flex items-center">
+          Upload Sekarang
+        </a>
+      </div>
+
+      <form id="formPhoto" onsubmit="handleSaveTripPhoto(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Direct Link Imej (URL) *</label>
+          <input type="url" id="photoUrlInput" placeholder="https://iili.io/xxxx.jpg atau https://freeimage.host/..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-ocean-500" required oninput="previewModalPhotoUrl(this.value)">
+          <p class="text-[10px] text-slate-500 mt-1">Salin pautan "Direct Link" (berakhir dengan .jpg, .png, dsb) daripada FreeImage.host.</p>
+        </div>
+
+        <!-- Live Preview Box -->
+        <div id="modalPhotoPreviewBox" class="hidden h-36 w-full rounded-xl border border-slate-700 bg-slate-950/80 overflow-hidden flex items-center justify-center relative">
+          <img id="modalPhotoPreviewImg" src="" alt="Pratonton" class="h-full w-full object-contain">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Tajuk / Ikan / Momen *</label>
+          <input type="text" id="photoCaptionTitle" placeholder="Cth: Strike Tenggiri 8kg Cikgu Lan" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Nama Pemancing (Striker) *</label>
+            <input type="text" id="photoAngler" placeholder="Cth: Cikgu Lan" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500" required>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Berat Tangkapan (Cth: 8.5 kg)</label>
+            <input type="text" id="photoWeight" placeholder="Cth: 8.5 kg" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Umpan / Gewang Digunakan</label>
+          <input type="text" id="photoBait" placeholder="Cth: Udang Hidup / Jig 60g / Popper" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ocean-500">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Tarikh Foto Trip</label>
+          <input type="date" id="photoTripDate" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-300 focus:outline-none font-mono" readonly>
+          <p class="text-[10px] text-slate-500 mt-0.5">Ditetapkan automatik bersamaan tarikh mula trip.</p>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="toggleAddPhotoModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-ocean-600 hover:bg-ocean-500 text-white font-semibold rounded-lg shadow-lg shadow-ocean-600/30 transition">Simpan Foto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: LIGHTBOX ZOOM PAPAR PENUH FOTO ================= -->
+  <div id="modalPhotoLightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-6" onclick="if(event.target === this) closePhotoLightbox()">
+    <div class="max-w-5xl w-full bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
+      <!-- Lightbox Header Bar -->
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-800 bg-slate-950/80">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <h3 id="lightboxPhotoTitle" class="text-sm sm:text-base font-bold text-white truncate max-w-xs sm:max-w-md">Foto Kenangan</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="lightboxBtnDirectLink" href="#" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-slate-800 hover:bg-ocean-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <span class="hidden sm:inline">Buka Sumber Asal</span>
+          </a>
+          <button onclick="closePhotoLightbox()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition" title="Tutup Paparan Penuh">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Photo Display (Zoomable Full Canvas) -->
+      <div class="flex-1 bg-black flex items-center justify-center overflow-hidden p-2 sm:p-4 min-h-[260px] max-h-[58vh]">
+        <img id="lightboxPhotoImg" src="" alt="Papar Penuh" class="max-h-full max-w-full object-contain rounded-lg shadow-2xl transition duration-300 hover:scale-[1.02] cursor-zoom-in" onclick="window.open(this.src, '_blank')">
+      </div>
+
+      <!-- Full Info Details Footer -->
+      <div class="p-4 sm:p-5 border-t border-slate-800 bg-slate-950/90 text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Striker / Pemancing</span>
+            <p id="lightboxStriker" class="text-xs sm:text-sm font-bold text-ocean-400 mt-0.5 truncate">-</p>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Berat Tangkapan</span>
+            <p id="lightboxWeight" class="text-xs sm:text-sm font-bold font-mono text-amber-400 mt-0.5 truncate">-</p>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Umpan / Gewang</span>
+            <p id="lightboxBait" class="text-xs sm:text-sm font-bold text-emerald-400 mt-0.5 truncate">-</p>
+          </div>
+          <div class="bg-slate-900/90 p-2.5 rounded-xl border border-slate-800">
+            <span class="text-[10px] text-slate-400 uppercase font-bold block">Tarikh Trip (Mula)</span>
+            <p id="lightboxDate" class="text-xs sm:text-sm font-bold font-mono text-slate-200 mt-0.5 truncate">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: INPUT DIRECT LINK JADUAL PASANG SURUT ================= -->
+  <div id="modalTideLink" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-4">
+        <h3 id="modalTideTitle" class="text-base font-bold text-white flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+          Masukkan Direct Link Jadual Pasang Surut
+        </h3>
+        <button onclick="closeTideModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Quick helper -->
+      <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl p-3 mb-4 flex items-center justify-between gap-2">
+        <div class="text-xs text-slate-300">
+          <span class="font-bold text-sky-400 block">Hubungi FreeImage.host:</span>
+          Upload gambar carta pasang surut dan salin <span class="font-mono text-amber-300">Direct Link</span> URL.
+        </div>
+        <a href="https://freeimage.host/upload" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold shrink-0 transition inline-flex items-center">
+          Upload Sekarang
+        </a>
+      </div>
+
+      <form id="formTideLink" onsubmit="handleSaveTideLink(event)" class="space-y-3.5 text-xs sm:text-sm">
+        <input type="hidden" id="tideModalType" value="weekly">
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Direct Link Imej Carta (URL) *</label>
+          <input type="url" id="tideDirectUrlInput" placeholder="https://iili.io/xxxx.jpg atau https://freeimage.host/..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono text-xs focus:outline-none focus:border-cyan-500" required oninput="previewModalTideUrl(this.value)">
+          <p class="text-[10px] text-slate-500 mt-1">Pastikan pautan mengandungi format imej terus (.jpg, .jpeg, .png, dsb).</p>
+        </div>
+
+        <!-- Live Preview Box -->
+        <div id="modalTidePreviewBox" class="hidden h-36 w-full rounded-xl border border-slate-700 bg-slate-950/80 overflow-hidden flex items-center justify-center relative">
+          <img id="modalTidePreviewImg" src="" alt="Pratonton Carta" class="h-full w-full object-contain">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-700">
+          <button type="button" onclick="closeTideModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg font-medium transition">Batal</button>
+          <button type="submit" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-lg shadow-lg shadow-cyan-600/30 transition">Simpan Jadual Air</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="no-print mt-auto border-t border-slate-800 bg-slate-950 py-5 text-center text-xs text-slate-500 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Fishing Buddies &copy; 2026. Hak Cipta Terpelihara.</span>
+      </div>
+      <p class="text-slate-400">Direka khas untuk komuniti pemancing Malaysia &mdash; Pengiraan automatik & tuntutan telus.</p>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /**
+     * FISHING BUDDIES MEMBERS CLAIM GENERATOR
+     * Complete logic for expense sharing, advances reconciliation & trip archiving
+     */
+
+    // Storage Keys
+    const STORAGE_KEY_TRIPS = 'FISHING_BUDDIES_TRIPS_V1';
+    const STORAGE_KEY_ACTIVE_ID = 'FISHING_BUDDIES_ACTIVE_ID_V1';
+    const STORAGE_KEY_THEME = 'FISHING_BUDDIES_THEME_V1';
+
+    // State for History Table Sorting
+    let historySortColumn = 'startDate';
+    let historySortDirection = 'desc'; // 'asc' or 'desc'
+
+    // ================= THEME CONTROL LOGIC =================
+    function initTheme() {
+      // Default adalah tema gelap
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      applyTheme(savedTheme);
+    }
+
+    function applyTheme(theme) {
+      const icon = document.getElementById('themeToggleIcon');
+      const text = document.getElementById('themeToggleText');
+      const btn = document.getElementById('themeToggleBtn');
+
+      if (theme === 'light') {
+        document.body.classList.remove('theme-dark');
+        document.body.classList.add('theme-light');
+        if (icon) {
+          // Ikon Bulan / Mod Gelap untuk pertukaran seterusnya
+          icon.innerHTML = `<svg class="w-4 h-4 text-cyan-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>`;
+        }
+        if (text) text.innerText = 'Tema Marin';
+        if (btn) btn.setAttribute('title', 'Tema Semasa: Marin Terang (Klik untuk tukar ke Gelap)');
+      } else {
+        document.body.classList.remove('theme-light');
+        document.body.classList.add('theme-dark');
+        if (icon) {
+          // Ikon Matahari / Laut untuk pertukaran ke Mod Marin
+          icon.innerHTML = `<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`;
+        }
+        if (text) text.innerText = 'Tema Gelap';
+        if (btn) btn.setAttribute('title', 'Tema Semasa: Gelap (Klik untuk tukar ke Marin Terang)');
+      }
+    }
+
+    function toggleTheme() {
+      const isCurrentlyLight = document.body.classList.contains('theme-light');
+      const targetTheme = isCurrentlyLight ? 'dark' : 'light';
+      localStorage.setItem(STORAGE_KEY_THEME, targetTheme);
+      applyTheme(targetTheme);
+      showToast(targetTheme === 'light' ? 'Tema Marin (Terang) diaktifkan! 🌊⚓' : 'Tema Gelap diaktifkan! 🌙');
+    }
+
+    // Default Seed Trip Template
+    function createDefaultTrip() {
+      const today = new Date();
+      const dateStr = today.toISOString().split('T')[0];
+      
+      return {
+        id: 'trip_' + Date.now(),
+        referenceNo: 'FB-TRIP-' + today.getFullYear() + '-' + String(Math.floor(100 + Math.random() * 900)),
+        name: 'Trip Jigging & Bottom Rompin Tenggiri',
+        location: 'Jeti Kuala Rompin, Pahang',
+        startDate: dateStr,
+        endDate: dateStr,
+        boatLeader: 'Bot Tekong Salleh Strike',
+        treasurer: 'Capt. Hafiz',
+        notes: 'Deposit bot RM500 telah dibayar lebih awal. Baki dituntut mengikut agihan sama rata.',
+        members: ['Capt. Hafiz', 'Cikgu Lan', 'Abang Din', 'Mie Casting', 'Sam Rod'],
+        advances: [
+          { id: 'adv_1', member: 'Capt. Hafiz', amount: 200, date: dateStr, notes: 'DuitNow ke Tekong (Deposit Bot)' },
+          { id: 'adv_2', member: 'Cikgu Lan', amount: 150, date: dateStr, notes: 'Online Transfer Advance' },
+          { id: 'adv_3', member: 'Abang Din', amount: 150, date: dateStr, notes: 'Online Transfer Advance' },
+          { id: 'adv_4', member: 'Mie Casting', amount: 150, date: dateStr, notes: 'Online Transfer Advance' },
+          { id: 'adv_5', member: 'Sam Rod', amount: 150, date: dateStr, notes: 'Online Transfer Advance' }
+        ],
+        expenses: [
+          { id: 'exp_1', name: 'Sewa Bot 2 Hari 1 Malam', category: 'Sewa Bot & Tekong', paidBy: 'Capt. Hafiz', quantity: 1, unitPrice: 1600.00, total: 1600.00, note: 'Resit Rasmi Tekong Salleh' },
+          { id: 'exp_2', name: 'Udang Hidup Segar (Umpan)', category: 'Umpan Hidup / Mati', paidBy: 'Cikgu Lan', quantity: 4, unitPrice: 45.00, total: 180.00, note: 'Beli di Kolam Umpan Rompin' },
+          { id: 'exp_3', name: 'Ais Batu 3 Tong Besar & Garam Kasar', category: 'Ais, Tong & Garam', paidBy: 'Abang Din', quantity: 3, unitPrice: 25.00, total: 75.00, note: 'Kilang Ais Jeti' },
+          { id: 'exp_4', name: 'Minyak Kereta & Tol Perjalanan (2 Kereta)', category: 'Minyak, Tol & Parkir', paidBy: 'Mie Casting', quantity: 2, unitPrice: 130.00, total: 260.00, note: 'Resit Petronas & Touch n Go' },
+          { id: 'exp_5', name: 'Ration Makanan, Air Mineral & Kopi Bot', category: 'Makanan, Minuman & Runcit', paidBy: 'Sam Rod', quantity: 1, unitPrice: 145.00, total: 145.00, note: 'Pasaraya Rompin' },
+          { id: 'exp_6', name: 'Tips & Minuman Awak-Awak / Krew Bot', category: 'Tips Tekong & Krew', paidBy: 'Capt. Hafiz', quantity: 1, unitPrice: 100.00, total: 100.00, note: 'Saguhati kerja keras krew' }
+        ],
+        photos: [],
+        tideWeekly: '',
+        tideDaily: '',
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    // Application State
+    let tripsList = [];
+    let currentTrip = null;
+
+    // ================= INITIALIZATION =================
+    window.onload = function() {
+      initTheme();
+      loadTripsFromStorage();
+      bindHeaderInputs();
+      renderAll();
+      showToast('Sistem Fishing Buddies sedia digunakan!');
+    };
+
+    function loadTripsFromStorage() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY_TRIPS);
+        if (stored) {
+          tripsList = JSON.parse(stored);
+        } else {
+          // Default initial trip
+          const seed = createDefaultTrip();
+          tripsList = [seed];
+          localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(tripsList));
+        }
+
+        const activeId = localStorage.getItem(STORAGE_KEY_ACTIVE_ID);
+        if (activeId && tripsList.some(t => t.id === activeId)) {
+          currentTrip = tripsList.find(t => t.id === activeId);
+        } else {
+          currentTrip = tripsList[0];
+          localStorage.setItem(STORAGE_KEY_ACTIVE_ID, currentTrip.id);
+        }
+      } catch (e) {
+        console.error("Gagal memuatkan data dari storan", e);
+        currentTrip = createDefaultTrip();
+        tripsList = [currentTrip];
+      }
+    }
+
+    function saveCurrentTrip(showNotification = false) {
+      if (!currentTrip) return;
+
+      // Sync form values into currentTrip
+      currentTrip.name = document.getElementById('tripName').value.trim() || 'Trip Tanpa Nama';
+      currentTrip.location = document.getElementById('tripLocation').value.trim() || 'Lokasi Belum Ditentukan';
+      currentTrip.startDate = document.getElementById('tripStartDate').value || '';
+      currentTrip.endDate = document.getElementById('tripEndDate').value || '';
+      currentTrip.boatLeader = document.getElementById('tripBoatLeader').value.trim() || '';
+      currentTrip.treasurer = document.getElementById('tripTreasurer').value.trim() || '';
+      currentTrip.notes = document.getElementById('tripNotes').value.trim() || '';
+      currentTrip.updatedAt = new Date().toISOString();
+
+      // Upsert in list
+      const idx = tripsList.findIndex(t => t.id === currentTrip.id);
+      if (idx >= 0) {
+        tripsList[idx] = currentTrip;
+      } else {
+        tripsList.unshift(currentTrip);
+      }
+
+      localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(tripsList));
+      localStorage.setItem(STORAGE_KEY_ACTIVE_ID, currentTrip.id);
+
+      renderAll();
+      if (showNotification) {
+        showToast('Rekod trip berjaya disimpan!');
+      }
+    }
+
+    function bindHeaderInputs() {
+      if (!currentTrip) return;
+      document.getElementById('tripName').value = currentTrip.name || '';
+      document.getElementById('tripLocation').value = currentTrip.location || '';
+      document.getElementById('tripStartDate').value = currentTrip.startDate || '';
+      document.getElementById('tripEndDate').value = currentTrip.endDate || '';
+      document.getElementById('tripBoatLeader').value = currentTrip.boatLeader || '';
+      document.getElementById('tripTreasurer').value = currentTrip.treasurer || '';
+      document.getElementById('tripNotes').value = currentTrip.notes || '';
+
+      // Live updates
+      ['tripName', 'tripLocation', 'tripStartDate', 'tripEndDate', 'tripBoatLeader', 'tripTreasurer', 'tripNotes'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          saveCurrentTrip(false);
+        });
+      });
+    }
+
+    function toggleTripDetailsForm() {
+      const form = document.getElementById('tripInfoForm');
+      const btnText = document.getElementById('btnToggleTripEditText');
+      if (form.classList.contains('hidden')) {
+        form.classList.remove('hidden');
+        btnText.innerText = 'Sembunyikan Maklumat Trip';
+      } else {
+        form.classList.add('hidden');
+        btnText.innerText = 'Kemaskini Maklumat Trip';
+      }
+    }
+
+    // ================= TABS SWITCHING =================
+    function switchTab(tabId) {
+      const tabs = ['dashboard', 'expenses', 'claims', 'gallery', 'history'];
+      tabs.forEach(t => {
+        const page = document.getElementById('tab-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (!page || !btn) return;
+        if (t === tabId) {
+          page.classList.remove('hidden');
+          btn.className = "nav-tab-active flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-bold bg-ocean-600 text-white shadow transition";
+        } else {
+          page.classList.add('hidden');
+          btn.className = "nav-tab-inactive flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition";
+        }
+      });
+
+      if (tabId === 'history') {
+        renderHistoryList();
+      } else if (tabId === 'claims') {
+        renderOfficialDocument();
+      } else if (tabId === 'gallery') {
+        renderGalleryTab();
+      }
+    }
+
+    // ================= CALCULATION LOGIC =================
+    function getTripCalculations() {
+      const expenses = currentTrip.expenses || [];
+      const advances = currentTrip.advances || [];
+      const members = currentTrip.members || [];
+      const memberCount = members.length > 0 ? members.length : 1;
+
+      // 1. Total Expenses (Semua perbelanjaan trip)
+      const totalExpense = expenses.reduce((sum, item) => sum + Number(item.total || 0), 0);
+      
+      // 2. Total Advances (Jumlah deposit/advance dikutip daripada ahli)
+      const totalAdvance = advances.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+      // 2b. Perbelanjaan yang dibayar menggunakan Wang Pendahuluan
+      const poolExpenses = expenses
+        .filter(e => e.paidBy === 'Wang Pendahuluan')
+        .reduce((sum, item) => sum + Number(item.total || 0), 0);
+
+      // 2c. Baki Bersih Wang Pendahuluan (setelah ditolak penggunaan wang pendahuluan)
+      const advanceBalance = totalAdvance - poolExpenses;
+
+      // 3. Share per head (Equal Split)
+      const costPerHead = totalExpense / memberCount;
+
+      // 4. Per Member Metrics
+      const memberStats = {};
+      members.forEach(m => {
+        memberStats[m] = {
+          name: m,
+          advanceGiven: 0,
+          paidExpenses: 0,
+          totalPaid: 0,
+          shouldPay: costPerHead,
+          balance: 0
+        };
+      });
+
+      advances.forEach(a => {
+        if (memberStats[a.member]) {
+          memberStats[a.member].advanceGiven += Number(a.amount || 0);
+        }
+      });
+
+      expenses.forEach(e => {
+        if (memberStats[e.paidBy]) {
+          memberStats[e.paidBy].paidExpenses += Number(e.total || 0);
+        }
+      });
+
+      Object.keys(memberStats).forEach(m => {
+        const item = memberStats[m];
+        item.totalPaid = item.advanceGiven + item.paidExpenses;
+        item.balance = item.totalPaid - item.shouldPay;
+      });
+
+      // 5. Category Breakdown
+      const categoryTotals = {};
+      expenses.forEach(e => {
+        const cat = e.category || 'Pelbagai';
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(e.total || 0);
+      });
+
+      return {
+        totalExpense,
+        totalAdvance,
+        poolExpenses,
+        advanceBalance,
+        costPerHead,
+        memberCount,
+        memberStats,
+        categoryTotals
+      };
+    }
+
+    // ================= RENDERING =================
+    function renderAll() {
+      if (!currentTrip) return;
+
+      // Header labels
+      document.getElementById('headerTripTitle').innerText = currentTrip.name || 'Trip Memancing Tanpa Nama';
+      const start = currentTrip.startDate || 'Tarikh Belum Ditetapkan';
+      const end = currentTrip.endDate ? ' - ' + currentTrip.endDate : '';
+      document.getElementById('headerTripSubtitle').innerText = `${currentTrip.location || 'Lokasi Umum'} | ${start}${end}`;
+      document.getElementById('signTreasurerName').innerText = currentTrip.treasurer ? `Disediakan: ${currentTrip.treasurer}` : 'Disediakan Oleh Bendahari';
+      document.getElementById('signBoatCaptain').innerText = currentTrip.boatLeader ? `Disahkan: ${currentTrip.boatLeader}` : 'Disahkan Oleh Tekong Bot';
+
+      const calcs = getTripCalculations();
+
+      // Top Quick summary pills
+      document.getElementById('pillTotalMembers').innerText = `${calcs.memberCount} Orang`;
+      document.getElementById('pillTotalExpenses').innerText = formatRM(calcs.totalExpense);
+      document.getElementById('pillCostPerMember').innerText = formatRM(calcs.costPerHead);
+      document.getElementById('pillTotalAdvances').innerText = formatRM(calcs.advanceBalance);
+
+      // Dashboard Cards
+      document.getElementById('cardTotalExpense').innerText = formatRM(calcs.totalExpense);
+      document.getElementById('cardExpenseCount').innerText = `${currentTrip.expenses.length} item perbelanjaan`;
+      
+      document.getElementById('cardTotalAdvances').innerText = formatRM(calcs.totalAdvance);
+      document.getElementById('cardAdvanceCount').innerText = `${currentTrip.advances.length} rekod bayaran deposit`;
+
+      const poolBalance = calcs.advanceBalance;
+      const cardPoolBalance = document.getElementById('cardPoolBalance');
+      const cardPoolDesc = document.getElementById('cardPoolDesc');
+      if (poolBalance >= 0) {
+        cardPoolBalance.innerText = formatRM(poolBalance);
+        cardPoolBalance.className = "text-2xl font-black text-emerald-400 font-mono tracking-tight";
+        cardPoolDesc.innerText = calcs.poolExpenses > 0 
+          ? `Baki tersedia (Dibelanjakan: ${formatRM(calcs.poolExpenses)})`
+          : "Baki penuh wang pendahuluan belum digunakan";
+      } else {
+        cardPoolBalance.innerText = `-${formatRM(Math.abs(poolBalance))}`;
+        cardPoolBalance.className = "text-2xl font-black text-rose-400 font-mono tracking-tight";
+        cardPoolDesc.innerText = `Defisit wang pendahuluan (Terlebih belanja ${formatRM(Math.abs(poolBalance))})`;
+      }
+
+      document.getElementById('cardPerMemberShare').innerText = formatRM(calcs.costPerHead);
+      document.getElementById('cardMemberCountDesc').innerText = `Agihan sama rata untuk ${calcs.memberCount} ahli`;
+
+      // Render Categories
+      renderCategoryBars(calcs);
+
+      // Render Mini Member list on Dashboard
+      renderDashboardMembers(calcs);
+
+      // Render Settlement Flow on Dashboard
+      renderSettlementFlow(calcs);
+
+      // Render Members Chip
+      renderMembersChips();
+
+      // Populate Select Options for Payer and Advance
+      populateMemberSelectOptions();
+
+      // Render Expenses & Advances Table
+      renderExpensesTable();
+      renderAdvancesTable();
+
+      // Render Gallery & Tide Photos
+      renderGalleryTab();
+
+      // Render Document
+      renderOfficialDocument();
+
+      // Update History Badge
+      document.getElementById('historyBadge').innerText = tripsList.length;
+    }
+
+    // Format Currency Helper
+    function formatRM(val) {
+      const num = Number(val) || 0;
+      return 'RM ' + num.toLocaleString('ms-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Format Date Helper
+    function formatDateDisplay(dStr) {
+      if (!dStr) return '-';
+      try {
+        const d = new Date(dStr);
+        return d.toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' });
+      } catch (e) {
+        return dStr;
+      }
+    }
+
+    // Category Bars Rendering
+    function renderCategoryBars(calcs) {
+      const container = document.getElementById('categoryBarsContainer');
+      const categories = [
+        'Sewa Bot & Tekong',
+        'Rumah Rakit',
+        'Kelong',
+        'Campsite',
+        'Umpan Hidup / Mati',
+        'Minyak, Tol & Parkir',
+        'Makanan, Minuman & Runcit',
+        'Ais, Tong & Garam',
+        'Alatan, Lures & Bateri',
+        'Tips Tekong & Krew',
+        'Pelbagai'
+      ];
+
+      let highestCat = 'Tiada';
+      let maxVal = 0;
+
+      const itemsHtml = categories.map(cat => {
+        const val = calcs.categoryTotals[cat] || 0;
+        if (val > maxVal) {
+          maxVal = val;
+          highestCat = cat;
+        }
+        const pct = calcs.totalExpense > 0 ? ((val / calcs.totalExpense) * 100).toFixed(1) : 0;
+
+        return `
+          <div>
+            <div class="flex justify-between items-center text-xs mb-1">
+              <span class="font-semibold text-slate-300">${cat}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-slate-400 font-medium">${formatRM(val)}</span>
+                <span class="text-[10px] text-ocean-400 font-bold bg-slate-900 px-1.5 py-0.5 rounded">${pct}%</span>
+              </div>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-700/50">
+              <div class="bg-gradient-to-r from-ocean-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = itemsHtml || '<p class="text-xs text-slate-500">Tiada perbelanjaan direkodkan lagi.</p>';
+      document.getElementById('highestCategoryBadge').innerText = `Kos Utama: ${highestCat}`;
+    }
+
+    // Dashboard Members Mini List
+    function renderDashboardMembers(calcs) {
+      const container = document.getElementById('dashboardMembersMiniList');
+      const members = currentTrip.members || [];
+      document.getElementById('dashMembersCount').innerText = `${members.length} Ahli`;
+
+      if (members.length === 0) {
+        container.innerHTML = '<div class="text-xs text-slate-500 italic p-3 text-center">Sila masukkan nama ahli terlebih dahulu.</div>';
+        return;
+      }
+
+      container.innerHTML = members.map(m => {
+        const stat = calcs.memberStats[m] || { balance: 0, totalPaid: 0 };
+        const isRefund = stat.balance >= 0;
+        const statusBadge = isRefund
+          ? `<span class="badge-chip bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">+ Terlebih RM ${Math.abs(stat.balance).toFixed(2)}</span>`
+          : `<span class="badge-chip bg-rose-500/10 text-rose-400 border border-rose-500/30">- Kurang RM ${Math.abs(stat.balance).toFixed(2)}</span>`;
+
+        return `
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 flex items-center justify-between">
+            <div>
+              <div class="text-xs font-bold text-white">${m}</div>
+              <div class="text-[11px] text-slate-400">Telah bayar/dahulukan: <span class="font-mono text-slate-300 font-semibold">${formatRM(stat.totalPaid)}</span></div>
+            </div>
+            <div>
+              ${statusBadge}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Settlement Algorithm (Debt Simplification)
+    function renderSettlementFlow(calcs) {
+      const container = document.getElementById('settlementFlowContainer');
+      const stats = calcs.memberStats;
+      const debtors = [];   // negative balance: owes money
+      const creditors = []; // positive balance: receives money
+
+      Object.values(stats).forEach(s => {
+        const b = Math.round(s.balance * 100) / 100;
+        if (b < -0.01) {
+          debtors.push({ name: s.name, amount: Math.abs(b) });
+        } else if (b > 0.01) {
+          creditors.push({ name: s.name, amount: b });
+        }
+      });
+
+      // Baki Wang Pendahuluan diselaraskan jika ada lebihan atau defisit tabung
+      const advBal = Math.round(calcs.advanceBalance * 100) / 100;
+      if (advBal > 0.01) {
+        // Tabung memulangkan baki wang pendahuluan kepada ahli yang layak
+        debtors.push({ name: 'Baki Wang Pendahuluan (Tabung)', amount: advBal });
+      } else if (advBal < -0.01) {
+        // Tabung mengalami defisit, bayaran diperlukan ke tabung
+        creditors.push({ name: 'Tabung Wang Pendahuluan (Defisit)', amount: Math.abs(advBal) });
+      }
+
+      // Match debtors to creditors
+      const transactions = [];
+      let i = 0;
+      let j = 0;
+
+      while (i < debtors.length && j < creditors.length) {
+        const debtor = debtors[i];
+        const creditor = creditors[j];
+        const settleAmount = Math.min(debtor.amount, creditor.amount);
+
+        if (settleAmount > 0.01) {
+          transactions.push({
+            from: debtor.name,
+            to: creditor.name,
+            amount: settleAmount
+          });
+        }
+
+        debtor.amount -= settleAmount;
+        creditor.amount -= settleAmount;
+
+        if (debtor.amount <= 0.01) i++;
+        if (creditor.amount <= 0.01) j++;
+      }
+
+      if (transactions.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full bg-slate-900/50 border border-emerald-500/30 rounded-xl p-4 text-center">
+            <span class="inline-block p-2 rounded-full bg-emerald-500/20 text-emerald-400 mb-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            </span>
+            <h4 class="text-sm font-bold text-white">Semua Akaun Telah Seimbang!</h4>
+            <p class="text-xs text-slate-400 mt-0.5">Tiada baki hutang atau tunggakan antara peserta.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = transactions.map(t => {
+        const isFromPool = t.from.includes('Wang Pendahuluan');
+        const badgeColor = isFromPool ? 'bg-purple-500/20 text-purple-400' : 'bg-rose-500/20 text-rose-400';
+        const initial = isFromPool ? 'WP' : t.from.substring(0, 2).toUpperCase();
+
+        return `
+        <div class="bg-slate-900/70 p-3.5 rounded-xl border border-slate-700/80 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg ${badgeColor} flex items-center justify-center font-bold text-xs shrink-0">
+              ${initial}
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">${escapeHtml(t.from)}</p>
+              <p class="text-[10px] text-slate-400">perlu bayar kepada <span class="text-emerald-400 font-semibold">${escapeHtml(t.to)}</span></p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="font-mono text-sm font-black text-amber-400">${formatRM(t.amount)}</span>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    // ================= MEMBERS MANAGEMENT =================
+    function renderMembersChips() {
+      const container = document.getElementById('membersChipContainer');
+      const members = currentTrip.members || [];
+
+      if (members.length === 0) {
+        container.innerHTML = '<span class="text-xs text-slate-500 italic">Tiada ahli didaftarkan. Sila tambah di atas.</span>';
+        return;
+      }
+
+      container.innerHTML = members.map(m => `
+        <div class="inline-flex items-center gap-1.5 bg-slate-700/70 text-slate-200 px-3 py-1 rounded-full text-xs border border-slate-600">
+          <svg class="w-3.5 h-3.5 text-ocean-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+          <span class="font-medium">${m}</span>
+          <button onclick="removeMember('${escapeHtml(m)}')" class="text-slate-400 hover:text-rose-400 ml-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function handleAddMember(e) {
+      e.preventDefault();
+      const input = document.getElementById('inputNewMemberName');
+      const name = input.value.trim();
+      if (!name) return;
+
+      if (!currentTrip.members) currentTrip.members = [];
+      if (currentTrip.members.includes(name)) {
+        showToast('Nama peserta sudah wujud dalam senarai!', 'error');
+        return;
+      }
+
+      currentTrip.members.push(name);
+      input.value = '';
+      saveCurrentTrip();
+      showToast(`Peserta "${name}" berjaya ditambah!`);
+    }
+
+    function removeMember(name) {
+      if (!currentTrip.members) return;
+
+      // Check if member is used in expenses or advances
+      const hasExpenses = currentTrip.expenses.some(e => e.paidBy === name);
+      const hasAdvances = currentTrip.advances.some(a => a.member === name);
+
+      if (hasExpenses || hasAdvances) {
+        showToast(`Peserta "${name}" tidak boleh dipadam kerana mempunyai rekod belanja/advance berkaitan. Padam rekod perbelanjaan beliau terlebih dahulu.`, 'error');
+        return;
+      }
+
+      currentTrip.members = currentTrip.members.filter(m => m !== name);
+      saveCurrentTrip();
+      showToast(`Peserta "${name}" dikeluarkan.`);
+    }
+
+    function populateMemberSelectOptions() {
+      const members = currentTrip.members || [];
+      const expPaidBy = document.getElementById('expPaidBy');
+      const advMemberName = document.getElementById('advMemberName');
+      const filterExpensePayer = document.getElementById('filterExpensePayer');
+
+      const currentPayerFilter = filterExpensePayer.value;
+      const currentPaidByVal = expPaidBy.value;
+
+      const optsHtml = members.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+      
+      // Tambah item "Wang Pendahuluan" dalam menu dropdown pembayar
+      expPaidBy.innerHTML = `<option value="Wang Pendahuluan">💵 Wang Pendahuluan</option>` + (optsHtml || '<option value="">(Sila tambah ahli)</option>');
+      if (currentPaidByVal) {
+        expPaidBy.value = currentPaidByVal;
+      }
+
+      advMemberName.innerHTML = optsHtml || '<option value="">(Sila tambah ahli)</option>';
+
+      filterExpensePayer.innerHTML = `<option value="ALL">Semua Pembayar (Didahului Oleh)</option><option value="Wang Pendahuluan">💵 Wang Pendahuluan</option>` + optsHtml;
+      filterExpensePayer.value = currentPayerFilter || 'ALL';
+    }
+
+    // ================= EXPENSES MANAGEMENT =================
+    function toggleExpenseFormModal(editId = null) {
+      const modal = document.getElementById('modalExpense');
+      const title = document.getElementById('modalExpenseTitle');
+      const form = document.getElementById('formExpense');
+
+      if (modal.classList.contains('hidden')) {
+        // Opening modal
+        if (editId) {
+          title.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Kemaskini Perbelanjaan';
+          const item = currentTrip.expenses.find(e => e.id === editId);
+          if (item) {
+            document.getElementById('expEditId').value = item.id;
+            document.getElementById('expItemName').value = item.name;
+            document.getElementById('expCategory').value = item.category;
+            document.getElementById('expPaidBy').value = item.paidBy;
+            document.getElementById('expQuantity').value = item.quantity;
+            document.getElementById('expUnitPrice').value = item.unitPrice;
+            document.getElementById('expTotalAmount').value = Number(item.total).toFixed(2);
+            document.getElementById('expReceiptNote').value = item.note || '';
+          }
+        } else {
+          title.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-ocean-500"></span> Tambah Perbelanjaan Trip';
+          form.reset();
+          document.getElementById('expEditId').value = '';
+          document.getElementById('expQuantity').value = 1;
+          document.getElementById('expTotalAmount').value = '0.00';
+        }
+        modal.classList.remove('hidden');
+      } else {
+        // Closing modal
+        modal.classList.add('hidden');
+      }
+    }
+
+    function calculateModalExpenseTotal() {
+      const qty = parseFloat(document.getElementById('expQuantity').value) || 0;
+      const unit = parseFloat(document.getElementById('expUnitPrice').value) || 0;
+      const total = qty * unit;
+      document.getElementById('expTotalAmount').value = total.toFixed(2);
+    }
+
+    function handleSaveExpense(e) {
+      e.preventDefault();
+      const editId = document.getElementById('expEditId').value;
+      const name = document.getElementById('expItemName').value.trim();
+      const category = document.getElementById('expCategory').value;
+      const paidBy = document.getElementById('expPaidBy').value;
+      const quantity = parseFloat(document.getElementById('expQuantity').value) || 1;
+      const unitPrice = parseFloat(document.getElementById('expUnitPrice').value) || 0;
+      const total = quantity * unitPrice;
+      const note = document.getElementById('expReceiptNote').value.trim();
+
+      if (!name || !paidBy) {
+        showToast('Sila isi maklumat yang diperlukan!', 'error');
+        return;
+      }
+
+      if (editId) {
+        // Update
+        const idx = currentTrip.expenses.findIndex(x => x.id === editId);
+        if (idx >= 0) {
+          currentTrip.expenses[idx] = {
+            id: editId,
+            name,
+            category,
+            paidBy,
+            quantity,
+            unitPrice,
+            total,
+            note
+          };
+          showToast('Item perbelanjaan dikemaskini!');
+        }
+      } else {
+        // Add new
+        const newExp = {
+          id: 'exp_' + Date.now(),
+          name,
+          category,
+          paidBy,
+          quantity,
+          unitPrice,
+          total,
+          note
+        };
+        currentTrip.expenses.push(newExp);
+        showToast('Item perbelanjaan berjaya ditambah!');
+      }
+
+      toggleExpenseFormModal();
+      saveCurrentTrip();
+    }
+
+    function deleteExpense(expId) {
+      currentTrip.expenses = currentTrip.expenses.filter(e => e.id !== expId);
+      saveCurrentTrip();
+      showToast('Item perbelanjaan dipadam.');
+    }
+
+    function renderExpensesTable() {
+      const tbody = document.getElementById('expensesTableBody');
+      const searchQuery = (document.getElementById('searchExpenseQuery').value || '').toLowerCase();
+      const catFilter = document.getElementById('filterExpenseCategory').value || 'ALL';
+      const payerFilter = document.getElementById('filterExpensePayer').value || 'ALL';
+
+      let items = currentTrip.expenses || [];
+
+      // Filters
+      if (catFilter !== 'ALL') {
+        items = items.filter(i => i.category === catFilter);
+      }
+      if (payerFilter !== 'ALL') {
+        items = items.filter(i => i.paidBy === payerFilter);
+      }
+      if (searchQuery) {
+        items = items.filter(i => 
+          i.name.toLowerCase().includes(searchQuery) || 
+          (i.note && i.note.toLowerCase().includes(searchQuery)) ||
+          i.paidBy.toLowerCase().includes(searchQuery)
+        );
+      }
+
+      if (items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center py-6 text-slate-500 italic">
+              Tiada rekod perbelanjaan dijumpai.
+            </td>
+          </tr>
+        `;
+        document.getElementById('tableTotalExpenseValue').innerText = 'RM 0.00';
+        return;
+      }
+
+      let subtotal = 0;
+      tbody.innerHTML = items.map(i => {
+        subtotal += Number(i.total || 0);
+        const isFromAdvance = i.paidBy === 'Wang Pendahuluan';
+        const payerDisplay = isFromAdvance
+          ? `<span class="badge-chip bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold">💵 Wang Pendahuluan</span>`
+          : `<span class="text-slate-300 font-medium">${escapeHtml(i.paidBy)}</span>`;
+
+        return `
+          <tr class="hover:bg-slate-800/80 transition">
+            <td class="py-3 px-3 font-medium text-white">
+              <div class="font-bold">${escapeHtml(i.name)}</div>
+              ${i.note ? `<div class="text-[11px] text-slate-400 mt-0.5">${escapeHtml(i.note)}</div>` : ''}
+            </td>
+            <td class="py-3 px-3">
+              <span class="badge-chip bg-slate-700 text-slate-300 text-[10px]">${escapeHtml(i.category)}</span>
+            </td>
+            <td class="py-3 px-3">
+              ${payerDisplay}
+            </td>
+            <td class="py-3 px-2 text-center font-mono text-slate-300">
+              ${i.quantity}
+            </td>
+            <td class="py-3 px-3 text-right font-mono text-slate-300">
+              ${formatRM(i.unitPrice)}
+            </td>
+            <td class="py-3 px-3 text-right font-mono text-amber-400 font-bold">
+              ${formatRM(i.total)}
+            </td>
+            <td class="py-3 px-2 text-center">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="toggleExpenseFormModal('${i.id}')" class="p-1 hover:text-ocean-400 text-slate-400 transition" title="Edit">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </button>
+                <button onclick="deleteExpense('${i.id}')" class="p-1 hover:text-rose-400 text-slate-400 transition" title="Padam">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('tableTotalExpenseValue').innerText = formatRM(subtotal);
+    }
+
+    // ================= ADVANCES / DEPOSIT MANAGEMENT =================
+    function toggleAdvanceFormModal(editId = null) {
+      const modal = document.getElementById('modalAdvance');
+      const form = document.getElementById('formAdvance');
+
+      if (modal.classList.contains('hidden')) {
+        form.reset();
+        document.getElementById('advDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('advEditId').value = '';
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function handleSaveAdvance(e) {
+      e.preventDefault();
+      const member = document.getElementById('advMemberName').value;
+      const amount = parseFloat(document.getElementById('advAmount').value) || 0;
+      const date = document.getElementById('advDate').value;
+      const notes = document.getElementById('advNotes').value.trim();
+
+      if (!member || amount <= 0) {
+        showToast('Sila masukkan nama dan jumlah yang sah!', 'error');
+        return;
+      }
+
+      if (!currentTrip.advances) currentTrip.advances = [];
+
+      const newAdv = {
+        id: 'adv_' + Date.now(),
+        member,
+        amount,
+        date: date || new Date().toISOString().split('T')[0],
+        notes
+      };
+
+      currentTrip.advances.push(newAdv);
+      saveCurrentTrip();
+      toggleAdvanceFormModal();
+      showToast('Deposit/Advance berjaya direkodkan!');
+    }
+
+    function deleteAdvance(advId) {
+      currentTrip.advances = currentTrip.advances.filter(a => a.id !== advId);
+      saveCurrentTrip();
+      showToast('Rekod advance dipadam.');
+    }
+
+    function renderAdvancesTable() {
+      const tbody = document.getElementById('advancesTableBody');
+      const advances = currentTrip.advances || [];
+
+      if (advances.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5" class="text-center py-6 text-slate-500 italic">
+              Tiada rekod advance / deposit awal.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = advances.map(a => `
+        <tr class="hover:bg-slate-800/80 transition">
+          <td class="py-3 px-4 font-bold text-white flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+            ${escapeHtml(a.member)}
+          </td>
+          <td class="py-3 px-4 text-slate-300">
+            <div>${escapeHtml(a.notes || 'Bayaran deposit trip')}</div>
+            <div class="text-[10px] text-slate-400 font-mono">${formatDateDisplay(a.date)}</div>
+          </td>
+          <td class="py-3 px-4 text-right font-mono font-bold text-purple-400">
+            ${formatRM(a.amount)}
+          </td>
+          <td class="py-3 px-4 text-center">
+            <span class="badge-chip bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[10px]">Diterima</span>
+          </td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="deleteAdvance('${a.id}')" class="p-1 hover:text-rose-400 text-slate-400 transition" title="Padam">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ================= OFFICIAL DOCUMENT PRINTABLE VIEW =================
+    function renderOfficialDocument() {
+      if (!currentTrip) return;
+      const calcs = getTripCalculations();
+
+      document.getElementById('docRefNo').innerText = currentTrip.referenceNo || 'FB-TRIP-001';
+      document.getElementById('docGeneratedDate').innerText = 'Dijana Pada: ' + new Date().toLocaleDateString('ms-MY', { day: '2-digit', month: 'long', year: 'numeric' });
+      document.getElementById('docTripName').innerText = currentTrip.name || 'Trip Memancing';
+      document.getElementById('docTripLocation').innerText = `${currentTrip.location || '-'} (${currentTrip.boatLeader || 'Tekong N/A'})`;
+      
+      const sDate = formatDateDisplay(currentTrip.startDate);
+      const eDate = currentTrip.endDate ? ' hingga ' + formatDateDisplay(currentTrip.endDate) : '';
+      document.getElementById('docTripDates').innerText = `${sDate}${eDate}`;
+      document.getElementById('docTripTreasurer').innerText = currentTrip.treasurer || 'Pengurusan Trip';
+
+      // 1. Members Summary Table
+      const summaryTbody = document.getElementById('docMembersSummaryTbody');
+      let sumAdv = 0;
+      let sumExp = 0;
+      let sumContr = 0;
+      let sumActual = 0;
+
+      summaryTbody.innerHTML = (currentTrip.members || []).map(m => {
+        const stat = calcs.memberStats[m] || { advanceGiven: 0, paidExpenses: 0, totalPaid: 0, shouldPay: 0, balance: 0 };
+        sumAdv += stat.advanceGiven;
+        sumExp += stat.paidExpenses;
+        sumContr += stat.totalPaid;
+        sumActual += stat.shouldPay;
+
+        const isRefund = stat.balance >= 0;
+        const balanceLabel = isRefund
+          ? `<span class="font-bold text-emerald-700">+ REFUND: ${formatRM(stat.balance)}</span>`
+          : `<span class="font-bold text-rose-700">- TOPUP: ${formatRM(Math.abs(stat.balance))}</span>`;
+
+        return `
+          <tr class="hover:bg-slate-50 text-slate-800">
+            <td class="py-2.5 px-3 font-bold">${escapeHtml(m)}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-600">${formatRM(stat.advanceGiven)}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-600">${formatRM(stat.paidExpenses)}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-900">${formatRM(stat.totalPaid)}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-600">${formatRM(stat.shouldPay)}</td>
+            <td class="py-2.5 px-3 text-right font-mono">${balanceLabel}</td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('docFootTotalAdvances').innerText = formatRM(sumAdv);
+      document.getElementById('docFootTotalPaidExpenses').innerText = formatRM(sumExp);
+      document.getElementById('docFootTotalContributed').innerText = formatRM(sumContr);
+      document.getElementById('docFootTotalActualCost').innerText = formatRM(sumActual);
+
+      const footBalanceEl = document.getElementById('docFootTotalBalanceStatus');
+      const netFootBalance = sumContr - sumActual;
+      if (Math.abs(netFootBalance) < 0.01) {
+        footBalanceEl.innerText = 'SEIMBANG (RM 0.00)';
+        footBalanceEl.className = 'py-2.5 px-3 text-right text-emerald-700 font-mono font-black';
+      } else if (netFootBalance > 0) {
+        footBalanceEl.innerText = `LEBIHAN TABUNG (+${formatRM(netFootBalance)})`;
+        footBalanceEl.className = 'py-2.5 px-3 text-right text-emerald-700 font-mono font-black';
+      } else {
+        footBalanceEl.innerText = `DEFISIT TABUNG (-${formatRM(Math.abs(netFootBalance))})`;
+        footBalanceEl.className = 'py-2.5 px-3 text-right text-rose-700 font-mono font-black';
+      }
+
+      // 2. Category Grid
+      const catGrid = document.getElementById('docCategoryGrid');
+      const cats = Object.keys(calcs.categoryTotals);
+      if (cats.length === 0) {
+        catGrid.innerHTML = '<div class="col-span-4 text-slate-400 italic">Tiada pecahan kategori.</div>';
+      } else {
+        catGrid.innerHTML = cats.map(c => `
+          <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-lg">
+            <span class="text-[10px] uppercase font-semibold text-slate-500 block">${c}</span>
+            <span class="text-xs font-mono font-bold text-slate-900">${formatRM(calcs.categoryTotals[c])}</span>
+          </div>
+        `).join('');
+      }
+
+      // 3. Itemised Expenses
+      const docExpTbody = document.getElementById('docExpensesTbody');
+      const expenses = currentTrip.expenses || [];
+      if (expenses.length === 0) {
+        docExpTbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-slate-400 italic">Tiada rekod item.</td></tr>';
+      } else {
+        docExpTbody.innerHTML = expenses.map((e, idx) => `
+          <tr class="hover:bg-slate-50 text-slate-800">
+            <td class="py-2 px-2 text-slate-400 font-mono">${idx + 1}</td>
+            <td class="py-2 px-3 font-medium">
+              ${escapeHtml(e.name)}
+              ${e.note ? `<span class="block text-[10px] text-slate-500 italic">${escapeHtml(e.note)}</span>` : ''}
+            </td>
+            <td class="py-2 px-3 text-slate-600">${escapeHtml(e.category)}</td>
+            <td class="py-2 px-3 ${e.paidBy === 'Wang Pendahuluan' ? 'font-bold text-purple-700' : 'text-slate-600 font-medium'}">${escapeHtml(e.paidBy)}</td>
+            <td class="py-2 px-2 text-center font-mono text-slate-600">${e.quantity}</td>
+            <td class="py-2 px-3 text-right font-mono text-slate-600">${formatRM(e.unitPrice)}</td>
+            <td class="py-2 px-3 text-right font-mono font-bold text-slate-900">${formatRM(e.total)}</td>
+          </tr>
+        `).join('');
+      }
+
+      document.getElementById('docExpensesTotalGrand').innerText = formatRM(calcs.totalExpense);
+
+      // 4. Attachments in Printable Claim Document (PDF)
+      const weeklyContainer = document.getElementById('docWeeklyTidePreview');
+      const dailyContainer = document.getElementById('docDailyTidePreview');
+      const photosGrid = document.getElementById('docPhotosGrid');
+
+      if (currentTrip.tideWeekly) {
+        weeklyContainer.innerHTML = `<img src="${currentTrip.tideWeekly}" alt="Jadual Mingguan" class="max-h-44 object-contain mx-auto rounded">`;
+      } else {
+        weeklyContainer.innerHTML = `<span class="text-[11px] text-slate-400 italic">Tiada foto jadual mingguan dimuat naik</span>`;
+      }
+
+      if (currentTrip.tideDaily) {
+        dailyContainer.innerHTML = `<img src="${currentTrip.tideDaily}" alt="Jadual Harian" class="max-h-44 object-contain mx-auto rounded">`;
+      } else {
+        dailyContainer.innerHTML = `<span class="text-[11px] text-slate-400 italic">Tiada foto jadual harian dimuat naik</span>`;
+      }
+
+      const photos = currentTrip.photos || [];
+      if (photos.length === 0) {
+        photosGrid.innerHTML = `<div class="col-span-full text-slate-400 italic text-xs py-2">Tiada foto kenangan trip disertakan.</div>`;
+      } else {
+        photosGrid.innerHTML = photos.map(p => `
+          <div class="border border-slate-200 rounded-lg p-2 bg-slate-50 text-center">
+            <div class="h-28 overflow-hidden rounded mb-1 bg-slate-200 flex items-center justify-center">
+              <img src="${p.dataUrl}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover">
+            </div>
+            <p class="font-bold text-[11px] text-slate-900 truncate">${escapeHtml(p.title)}</p>
+            <p class="text-[10px] text-slate-600 truncate">Striker: <span class="font-semibold">${escapeHtml(p.angler || p.striker || '-')}</span></p>
+            ${p.weight ? `<p class="text-[10px] text-amber-700 font-mono font-semibold">${escapeHtml(p.weight)}</p>` : ''}
+            ${p.bait ? `<p class="text-[10px] text-emerald-700 italic">${escapeHtml(p.bait)}</p>` : ''}
+            <p class="text-[9px] text-slate-400 font-mono mt-0.5">${formatDateDisplay(currentTrip.startDate || p.date)}</p>
+          </div>
+        `).join('');
+      }
+    }
+
+    // ================= WHATSAPP SHARE GENERATOR =================
+    function copyTripClaimSummaryText() {
+      if (!currentTrip) return;
+      const calcs = getTripCalculations();
+
+      let text = `🎣 *FISHING BUDDIES — PENYATA TUNTUTAN TRIP* 🎣\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `📍 *Trip:* ${currentTrip.name}\n`;
+      text += `🚤 *Spot / Bot:* ${currentTrip.location} (${currentTrip.boatLeader || 'Tekong'})\n`;
+      text += `📅 *Tarikh:* ${currentTrip.startDate} ${currentTrip.endDate ? 'ke ' + currentTrip.endDate : ''}\n`;
+      text += `💰 *Jumlah Kos Trip:* ${formatRM(calcs.totalExpense)}\n`;
+      text += `👥 *Bilangan Peserta:* ${calcs.memberCount} orang\n`;
+      text += `🏷️ *Kadar Seorang:* ${formatRM(calcs.costPerHead)}\n`;
+      text += `💵 *Advances Terkumpul:* ${formatRM(calcs.totalAdvance)}\n`;
+      if (calcs.poolExpenses > 0) {
+        text += `🧾 *Guna Wang Pendahuluan:* ${formatRM(calcs.poolExpenses)}\n`;
+        text += `💼 *Baki Wang Pendahuluan:* ${formatRM(calcs.advanceBalance)}\n`;
+      }
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `📊 *STATUS KEDUDUKAN SETIAP AHLI:*\n`;
+
+      Object.values(calcs.memberStats).forEach(s => {
+        const bal = s.balance;
+        if (bal >= 0) {
+          text += `✅ *${s.name}*: Layak Refund +${formatRM(bal)}\n`;
+        } else {
+          text += `⚠️ *${s.name}*: Perlu Tambah -${formatRM(Math.abs(bal))}\n`;
+        }
+      });
+
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `💡 *Nota Penyelaras:* Sila selesaikan tuntutan selewat-lewatnya 3 hari selepas tamat trip. Terima kasih buddy!\n`;
+
+      copyToClipboardFallback(text);
+      showToast('Penyata disalin! Anda boleh terus paste ke WhatsApp.');
+    }
+
+    // Fallback Clipboard helper for iframes
+    function copyToClipboardFallback(text) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.style.position = "fixed";
+      textarea.style.top = "0";
+      textarea.style.left = "0";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Fallback clipboard error', err);
+      }
+      document.body.removeChild(textarea);
+    }
+
+    // ================= EXPORT CSV =================
+    function exportToCSV() {
+      if (!currentTrip) return;
+      const calcs = getTripCalculations();
+
+      let csv = `FISHING BUDDIES - PERINCIAN TUNTUTAN TRIP\n`;
+      csv += `Nama Trip,"${currentTrip.name}"\n`;
+      csv += `Lokasi,"${currentTrip.location}"\n`;
+      csv += `Tarikh,"${currentTrip.startDate} - ${currentTrip.endDate}"\n`;
+      csv += `Jumlah Perbelanjaan,"${calcs.totalExpense}"\n`;
+      csv += `Kadar Seorang,"${calcs.costPerHead}"\n\n`;
+
+      csv += `RINGKASAN PESERTA\n`;
+      csv += `Nama Peserta,Advances Diberi (RM),Perbelanjaan Didahului (RM),Jumlah Dibayar (RM),Kadar Sebenar (RM),Baki Tuntutan (RM)\n`;
+
+      Object.values(calcs.memberStats).forEach(s => {
+        csv += `"${s.name}",${s.advanceGiven},${s.paidExpenses},${s.totalPaid},${s.shouldPay},${s.balance}\n`;
+      });
+
+      csv += `\nSENARAI PERBELANJAAN ITEMISED\n`;
+      csv += `Bil,Item,Kategori,Didahului Oleh,Kuantiti,Harga Unit (RM),Jumlah (RM),Nota\n`;
+
+      (currentTrip.expenses || []).forEach((e, i) => {
+        csv += `${i + 1},"${e.name}","${e.category}","${e.paidBy}",${e.quantity},${e.unitPrice},${e.total},"${e.note || ''}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Claim_FishingBuddies_${currentTrip.referenceNo}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Fail CSV berjaya dimuat turun!');
+    }
+
+    // ================= TRIP CREATION & ARCHIVE HISTORY =================
+    function createNewTrip() {
+      const newTrip = {
+        id: 'trip_' + Date.now(),
+        referenceNo: 'FB-TRIP-' + new Date().getFullYear() + '-' + String(Math.floor(100 + Math.random() * 900)),
+        name: 'Trip Memancing Baharu',
+        location: 'Kuala Rompin / Yan / Tuas',
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: new Date().toISOString().split('T')[0],
+        boatLeader: 'Tekong',
+        treasurer: 'Bendahari Trip',
+        notes: '',
+        members: ['Saya'],
+        advances: [],
+        expenses: [],
+        photos: [],
+        tideWeekly: '',
+        tideDaily: '',
+        updatedAt: new Date().toISOString()
+      };
+
+      tripsList.unshift(newTrip);
+      currentTrip = newTrip;
+      localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(tripsList));
+      localStorage.setItem(STORAGE_KEY_ACTIVE_ID, newTrip.id);
+
+      bindHeaderInputs();
+      renderAll();
+      switchTab('expenses');
+      showToast('Trip baharu berjaya dibuka. Sila lengkapkan maklumat!');
+    }
+
+    function switchActiveTrip(tripId) {
+      const found = tripsList.find(t => t.id === tripId);
+      if (found) {
+        currentTrip = found;
+        localStorage.setItem(STORAGE_KEY_ACTIVE_ID, currentTrip.id);
+        bindHeaderInputs();
+        renderAll();
+        switchTab('dashboard');
+        showToast(`Trip "${currentTrip.name}" kini aktif.`);
+      }
+    }
+
+    function deleteTrip(tripId) {
+      if (tripsList.length <= 1) {
+        showToast('Trip terakhir tidak boleh dipadam. Sila wujudkan trip lain terlebih dahulu.', 'error');
+        return;
+      }
+
+      tripsList = tripsList.filter(t => t.id !== tripId);
+      if (currentTrip.id === tripId) {
+        currentTrip = tripsList[0];
+        localStorage.setItem(STORAGE_KEY_ACTIVE_ID, currentTrip.id);
+      }
+
+      localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(tripsList));
+      bindHeaderInputs();
+      renderAll();
+      renderHistoryList();
+      showToast('Rekod trip dipadam dari arkib.');
+    }
+
+    // Toggle and apply sorting on history headers
+    function setHistorySort(columnKey) {
+      if (historySortColumn === columnKey) {
+        historySortDirection = historySortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        historySortColumn = columnKey;
+        historySortDirection = (columnKey === 'totalExpense' || columnKey === 'costPerPax' || columnKey === 'membersCount' || columnKey === 'startDate') ? 'desc' : 'asc';
+      }
+      renderHistoryList();
+    }
+
+    function renderHistoryList() {
+      const tbody = document.getElementById('historyTableBody');
+      const query = (document.getElementById('searchHistoryInput').value || '').toLowerCase();
+
+      // Update Header Sort Icons
+      const sortColumns = ['name', 'startDate', 'membersCount', 'totalExpense', 'costPerPax'];
+      sortColumns.forEach(col => {
+        const iconEl = document.getElementById(`sort-icon-${col}`);
+        if (!iconEl) return;
+        if (historySortColumn === col) {
+          iconEl.innerHTML = historySortDirection === 'asc' ? '▲' : '▼';
+          iconEl.className = 'text-ocean-400 font-bold';
+        } else {
+          iconEl.innerHTML = '⇅';
+          iconEl.className = 'text-slate-500 group-hover:text-ocean-400';
+        }
+      });
+
+      // Filter query
+      let filtered = tripsList.filter(t => {
+        if (!query) return true;
+        return (
+          (t.name && t.name.toLowerCase().includes(query)) ||
+          (t.location && t.location.toLowerCase().includes(query)) ||
+          (t.referenceNo && t.referenceNo.toLowerCase().includes(query)) ||
+          (t.boatLeader && t.boatLeader.toLowerCase().includes(query))
+        );
+      });
+
+      // Augment each trip with calculated values for accurate sorting
+      const augmented = filtered.map(t => {
+        const totalExp = (t.expenses || []).reduce((s, e) => s + Number(e.total || 0), 0);
+        const membersCount = (t.members || []).length || 1;
+        const costPerPax = totalExp / membersCount;
+        return {
+          ...t,
+          _totalExp: totalExp,
+          _membersCount: (t.members || []).length,
+          _costPerPax: costPerPax
+        };
+      });
+
+      // Sorting
+      augmented.sort((a, b) => {
+        let valA, valB;
+        switch (historySortColumn) {
+          case 'name':
+            valA = (a.name || '').toLowerCase();
+            valB = (b.name || '').toLowerCase();
+            break;
+          case 'startDate':
+            valA = new Date(a.startDate || '1970-01-01').getTime();
+            valB = new Date(b.startDate || '1970-01-01').getTime();
+            break;
+          case 'membersCount':
+            valA = a._membersCount;
+            valB = b._membersCount;
+            break;
+          case 'totalExpense':
+            valA = a._totalExp;
+            valB = b._totalExp;
+            break;
+          case 'costPerPax':
+            valA = a._costPerPax;
+            valB = b._costPerPax;
+            break;
+          default:
+            valA = a.id;
+            valB = b.id;
+        }
+
+        if (valA < valB) return historySortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return historySortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+
+      if (augmented.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center py-10 text-slate-400 italic">
+              <svg class="w-10 h-10 text-slate-500 mx-auto mb-2 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Tiada rekod trip sepadan ditemui dalam arkib.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = augmented.map(t => {
+        const isActive = t.id === currentTrip.id;
+        const totalExp = t._totalExp;
+        const count = t._membersCount;
+        const perPax = t._costPerPax;
+
+        return `
+          <tr class="hover:bg-slate-700/40 transition ${isActive ? 'bg-ocean-950/40 border-l-4 border-l-ocean-500' : ''}">
+            <!-- Kolum: Trip -->
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg ${isActive ? 'bg-ocean-600 text-white' : 'bg-slate-700 text-slate-300'} flex items-center justify-center font-bold text-xs shrink-0">
+                  🎣
+                </div>
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-bold text-white text-sm hover:text-ocean-400 cursor-pointer" onclick="switchActiveTrip('${t.id}')">
+                      ${escapeHtml(t.name || 'Trip Memancing')}
+                    </span>
+                    ${isActive ? '<span class="badge-chip bg-ocean-500/20 text-ocean-300 border border-ocean-500/40 text-[10px] py-0 px-1.5">Sedang Dibuka</span>' : ''}
+                  </div>
+                  <div class="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                    <span class="font-mono text-slate-500">${t.referenceNo || '-'}</span>
+                    <span>•</span>
+                    <span class="truncate max-w-[200px] sm:max-w-xs text-slate-300">${escapeHtml(t.location || 'Lokasi Belum Dinyatakan')}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Kolum: Tarikh -->
+            <td class="py-3.5 px-4 font-mono text-slate-300 whitespace-nowrap text-xs">
+              <div>${formatDateDisplay(t.startDate)}</div>
+              ${t.endDate && t.endDate !== t.startDate ? `<div class="text-[10px] text-slate-500">hingga ${formatDateDisplay(t.endDate)}</div>` : ''}
+            </td>
+
+            <!-- Kolum: Peserta -->
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              <span class="inline-flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full bg-slate-900/80 text-slate-200 border border-slate-700 text-xs">
+                <svg class="w-3 h-3 text-ocean-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+                ${count} Pax
+              </span>
+            </td>
+
+            <!-- Kolum: Jumlah Belanja -->
+            <td class="py-3.5 px-4 text-right font-mono font-bold text-amber-400 whitespace-nowrap">
+              ${formatRM(totalExp)}
+            </td>
+
+            <!-- Kolum: Kos/Pax -->
+            <td class="py-3.5 px-4 text-right font-mono font-bold text-emerald-400 whitespace-nowrap">
+              ${formatRM(perPax)}
+            </td>
+
+            <!-- Kolum: Tindakan -->
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="switchActiveTrip('${t.id}')" class="px-2.5 py-1.5 rounded-lg bg-ocean-600 hover:bg-ocean-500 text-white text-xs font-semibold flex items-center gap-1 transition" title="Pilih dan buka semula rekod trip ini">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                  <span>${isActive ? 'Paparkan' : 'Buka'}</span>
+                </button>
+                <button onclick="deleteTrip('${t.id}')" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-700/60 transition" title="Padam Trip Ini">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ================= BACKUP & IMPORT DATA =================
+    function exportAllTripsJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tripsList, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `FishingBuddies_Backup_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Salinan fail sandaran (JSON) dimuat turun!');
+    }
+
+    function importTripsJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (Array.isArray(imported) && imported.length > 0) {
+            tripsList = imported;
+            currentTrip = tripsList[0];
+            localStorage.setItem(STORAGE_KEY_TRIPS, JSON.stringify(tripsList));
+            localStorage.setItem(STORAGE_KEY_ACTIVE_ID, currentTrip.id);
+            bindHeaderInputs();
+            renderAll();
+            showToast('Data arkib trip berjaya dipulihkan!');
+          } else {
+            showToast('Format JSON tidak sah.', 'error');
+          }
+        } catch (err) {
+          showToast('Ralat membaca fail sandaran!', 'error');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    // ================= FOTO KENANGAN & JADUAL PASANG SURUT LOGIC =================
+    function toggleAddPhotoModal() {
+      const modal = document.getElementById('modalPhoto');
+      const form = document.getElementById('formPhoto');
+      const previewBox = document.getElementById('modalPhotoPreviewBox');
+      if (modal.classList.contains('hidden')) {
+        form.reset();
+        previewBox.classList.add('hidden');
+        const tripStartDate = currentTrip ? (currentTrip.startDate || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
+        document.getElementById('photoTripDate').value = tripStartDate;
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function previewModalPhotoUrl(url) {
+      const previewBox = document.getElementById('modalPhotoPreviewBox');
+      const previewImg = document.getElementById('modalPhotoPreviewImg');
+      if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+        previewImg.src = url.trim();
+        previewBox.classList.remove('hidden');
+      } else {
+        previewBox.classList.add('hidden');
+      }
+    }
+
+    // ================= LIGHTBOX ZOOM FUNCTIONS =================
+    function openPhotoLightbox(photoId) {
+      if (!currentTrip || !currentTrip.photos) return;
+      const photo = currentTrip.photos.find(p => p.id === photoId);
+      if (!photo) return;
+
+      document.getElementById('lightboxPhotoTitle').innerText = photo.title || 'Foto Kenangan';
+      document.getElementById('lightboxPhotoImg').src = photo.dataUrl;
+      document.getElementById('lightboxBtnDirectLink').href = photo.dataUrl;
+
+      document.getElementById('lightboxStriker').innerText = photo.angler || photo.striker || 'Tidak Dinyatakan';
+      document.getElementById('lightboxWeight').innerText = photo.weight || 'Tiada Rekod';
+      document.getElementById('lightboxBait').innerText = photo.bait || 'Tidak Dinyatakan';
+      document.getElementById('lightboxDate').innerText = formatDateDisplay(currentTrip.startDate || photo.date || photo.createdAt);
+
+      const modal = document.getElementById('modalPhotoLightbox');
+      modal.classList.remove('hidden');
+    }
+
+    function closePhotoLightbox() {
+      const modal = document.getElementById('modalPhotoLightbox');
+      modal.classList.add('hidden');
+      document.getElementById('lightboxPhotoImg').src = '';
+    }
+
+    function promptTideDirectLink(type) {
+      const modal = document.getElementById('modalTideLink');
+      const title = document.getElementById('modalTideTitle');
+      const typeInput = document.getElementById('tideModalType');
+      const urlInput = document.getElementById('tideDirectUrlInput');
+      const previewBox = document.getElementById('modalTidePreviewBox');
+      const previewImg = document.getElementById('modalTidePreviewImg');
+
+      typeInput.value = type;
+      const currentUrl = type === 'weekly' ? (currentTrip.tideWeekly || '') : (currentTrip.tideDaily || '');
+      urlInput.value = currentUrl;
+
+      if (type === 'weekly') {
+        title.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Direct Link Jadual Pasang Surut Mingguan';
+      } else {
+        title.innerHTML = '<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> Direct Link Jadual Pasang Surut Harian';
+      }
+
+      if (currentUrl) {
+        previewImg.src = currentUrl;
+        previewBox.classList.remove('hidden');
+      } else {
+        previewBox.classList.add('hidden');
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeTideModal() {
+      document.getElementById('modalTideLink').classList.add('hidden');
+    }
+
+    function previewModalTideUrl(url) {
+      const previewBox = document.getElementById('modalTidePreviewBox');
+      const previewImg = document.getElementById('modalTidePreviewImg');
+      if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+        previewImg.src = url.trim();
+        previewBox.classList.remove('hidden');
+      } else {
+        previewBox.classList.add('hidden');
+      }
+    }
+
+    function handleSaveTideLink(e) {
+      e.preventDefault();
+      const type = document.getElementById('tideModalType').value;
+      const directUrl = document.getElementById('tideDirectUrlInput').value.trim();
+
+      if (!directUrl) {
+        showToast('Sila masukkan direct link imej!', 'error');
+        return;
+      }
+
+      if (type === 'weekly') {
+        currentTrip.tideWeekly = directUrl;
+      } else if (type === 'daily') {
+        currentTrip.tideDaily = directUrl;
+      }
+
+      saveCurrentTrip();
+      closeTideModal();
+      renderGalleryTab();
+      renderOfficialDocument();
+      showToast(`Direct Link jadual pasang surut ${type === 'weekly' ? 'mingguan' : 'harian'} berjaya disimpan!`);
+    }
+
+    function removeTidePhoto(type) {
+      if (type === 'weekly') {
+        currentTrip.tideWeekly = '';
+      } else if (type === 'daily') {
+        currentTrip.tideDaily = '';
+      }
+      saveCurrentTrip();
+      renderGalleryTab();
+      renderOfficialDocument();
+      showToast(`Pautan foto jadual pasang surut dipadam.`);
+    }
+
+    function handleSaveTripPhoto(e) {
+      e.preventDefault();
+      const title = document.getElementById('photoCaptionTitle').value.trim();
+      const angler = document.getElementById('photoAngler').value.trim();
+      const weight = document.getElementById('photoWeight').value.trim();
+      const bait = document.getElementById('photoBait').value.trim();
+      const directUrl = document.getElementById('photoUrlInput').value.trim();
+      const photoTripDate = currentTrip ? (currentTrip.startDate || new Date().toISOString().split('T')[0]) : new Date().toISOString().split('T')[0];
+
+      if (!directUrl) {
+        showToast('Sila masukkan direct link URL daripada FreeImage.host!', 'error');
+        return;
+      }
+
+      if (!currentTrip.photos) currentTrip.photos = [];
+
+      const newPhoto = {
+        id: 'photo_' + Date.now(),
+        title: title || 'Foto Strike Trip',
+        angler: angler || '',
+        striker: angler || '',
+        weight: weight || '',
+        bait: bait || '',
+        date: photoTripDate,
+        dataUrl: directUrl,
+        createdAt: new Date().toISOString()
+      };
+
+      currentTrip.photos.unshift(newPhoto);
+      saveCurrentTrip();
+      toggleAddPhotoModal();
+      renderGalleryTab();
+      renderOfficialDocument();
+      showToast('Direct link foto kenangan trip berjaya disimpan!');
+    }
+
+    function deleteTripPhoto(photoId) {
+      if (!currentTrip.photos) return;
+      currentTrip.photos = currentTrip.photos.filter(p => p.id !== photoId);
+      saveCurrentTrip();
+      renderGalleryTab();
+      renderOfficialDocument();
+      showToast('Foto kenangan dipadam.');
+    }
+
+    function renderGalleryTab() {
+      if (!currentTrip) return;
+
+      const gallery = document.getElementById('photosGalleryContainer');
+      const photos = currentTrip.photos || [];
+
+      if (photos.length === 0) {
+        gallery.innerHTML = `
+          <div class="col-span-full bg-slate-900/50 border border-slate-700/80 rounded-xl p-8 text-center">
+            <svg class="w-12 h-12 text-slate-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <h5 class="text-sm font-bold text-slate-300">Belum Ada Foto Kenangan Dimasukkan</h5>
+            <p class="text-xs text-slate-500 mt-1">Klik butang "1. Hubungi FreeImage.host" untuk upload, kemudian klik "2. Masukkan Direct Link Foto" untuk simpan.</p>
+          </div>
+        `;
+      } else {
+        const tripDateDisplay = formatDateDisplay(currentTrip.startDate);
+
+        gallery.innerHTML = photos.map(p => {
+          const photoDate = tripDateDisplay !== '-' ? tripDateDisplay : formatDateDisplay(p.date || p.createdAt);
+          const strikerName = p.angler || p.striker || 'Fishing Buddies';
+
+          return `
+          <div class="bg-slate-900/80 border border-slate-700/80 rounded-xl overflow-hidden shadow group flex flex-col justify-between hover:border-ocean-500/50 transition">
+            <div class="h-48 bg-slate-950 overflow-hidden relative flex items-center justify-center cursor-pointer" onclick="openPhotoLightbox('${p.id}')">
+              <img src="${p.dataUrl}" alt="${escapeHtml(p.title)}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Imej+Tidak+Ditemui';">
+              
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                <span class="px-3 py-1.5 bg-ocean-600/90 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-lg backdrop-blur-sm">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+                  Klik Untuk Zoom
+                </span>
+              </div>
+
+              <div class="absolute top-2 right-2 flex items-center gap-1 z-10" onclick="event.stopPropagation()">
+                <a href="${p.dataUrl}" target="_blank" rel="noopener noreferrer" class="p-1.5 bg-black/60 hover:bg-ocean-600 text-white rounded-lg transition" title="Buka Imej Asal">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+                <button onclick="deleteTripPhoto('${p.id}')" class="p-1.5 bg-black/60 hover:bg-rose-600 text-white rounded-lg transition" title="Padam Foto">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-3.5 space-y-2">
+              <div>
+                <h5 class="font-bold text-white text-xs sm:text-sm truncate cursor-pointer hover:text-ocean-400 transition" onclick="openPhotoLightbox('${p.id}')">${escapeHtml(p.title)}</h5>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
+                  <span class="truncate font-semibold text-ocean-300">🎣 ${escapeHtml(strikerName)}</span>
+                  <span class="font-mono text-[10px] text-slate-400 bg-slate-800/90 px-1.5 py-0.5 rounded">${photoDate}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                ${p.weight ? `<span class="badge-chip bg-amber-500/10 text-amber-300 border border-amber-500/20 py-0.5 px-2">⚖️ ${escapeHtml(p.weight)}</span>` : ''}
+                ${p.bait ? `<span class="badge-chip bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 py-0.5 px-2 truncate max-w-[170px]">🪱 ${escapeHtml(p.bait)}</span>` : ''}
+              </div>
+
+              <button onclick="openPhotoLightbox('${p.id}')" class="w-full mt-2 py-1.5 bg-slate-800 hover:bg-ocean-600 text-slate-200 hover:text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-ocean-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>Lihat Penuh (Zoom)</span>
+              </button>
+            </div>
+          </div>
+        `;
+        }).join('');
+      }
+
+      const weeklyContainer = document.getElementById('weeklyTideCardPreview');
+      const btnRemoveWeekly = document.getElementById('btnRemoveWeeklyTide');
+      if (currentTrip.tideWeekly) {
+        weeklyContainer.innerHTML = `
+          <a href="${currentTrip.tideWeekly}" target="_blank" rel="noopener noreferrer" class="w-full h-full flex items-center justify-center p-1">
+            <img src="${currentTrip.tideWeekly}" alt="Jadual Pasang Surut Mingguan" class="w-full h-48 object-contain rounded-lg hover:opacity-95 transition" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Imej+Jadual+Tidak+Ditemui';">
+          </a>
+        `;
+        btnRemoveWeekly.classList.remove('hidden');
+      } else {
+        weeklyContainer.innerHTML = `
+          <div class="text-center p-4">
+            <svg class="w-8 h-8 text-cyan-500/60 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <p class="text-xs text-slate-400">Belum ada direct link jadual mingguan</p>
+            <p class="text-[10px] text-slate-500">Klik "1. Hubungi FreeImage" lalu "2. Masukkan Direct Link"</p>
+          </div>
+        `;
+        btnRemoveWeekly.classList.add('hidden');
+      }
+
+      const dailyContainer = document.getElementById('dailyTideCardPreview');
+      const btnRemoveDaily = document.getElementById('btnRemoveDailyTide');
+      if (currentTrip.tideDaily) {
+        dailyContainer.innerHTML = `
+          <a href="${currentTrip.tideDaily}" target="_blank" rel="noopener noreferrer" class="w-full h-full flex items-center justify-center p-1">
+            <img src="${currentTrip.tideDaily}" alt="Jadual Pasang Surut Harian" class="w-full h-48 object-contain rounded-lg hover:opacity-95 transition" onerror="this.onerror=null;this.src='https://placehold.co/600x400/0f172a/94a3b8?text=Imej+Jadual+Tidak+Ditemui';">
+          </a>
+        `;
+        btnRemoveDaily.classList.remove('hidden');
+      } else {
+        dailyContainer.innerHTML = `
+          <div class="text-center p-4">
+            <svg class="w-8 h-8 text-emerald-500/60 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="text-xs text-slate-400">Belum ada direct link jadual harian</p>
+            <p class="text-[10px] text-slate-500">Klik "1. Hubungi FreeImage" lalu "2. Masukkan Direct Link"</p>
+          </div>
+        `;
+        btnRemoveDaily.classList.add('hidden');
+      }
+    }
+
+    // ================= NOTIFICATION TOAST =================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+
+      msg.innerText = message;
+      if (type === 'error') {
+        icon.className = "w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0";
+        icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+      } else {
+        icon.className = "w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0";
+        icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+      }
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // Escape helper
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>
